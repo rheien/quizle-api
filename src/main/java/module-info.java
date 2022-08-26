@@ -1,6 +1,5 @@
 module org.example.quizleapi {
-    requires javax.servlet.api;
-    requires org.eclipse.jetty.server;
+    requires jdk.httpserver;
 
     exports org.example.quizleapi;
 }
