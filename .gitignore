@@ -4,7 +4,6 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 !**/src/main/resources
-module-info.java
 
 ### IntelliJ IDEA ###
 .idea
