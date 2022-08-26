@@ -15,7 +15,6 @@ ext {
 }
 
 application {
-    mainModule = 'org.example.quizleapi'
     mainClass = 'org.example.quizleapi.App'
 }
 
