@@ -1,28 +1,35 @@
 package org.example.quizleapi;
 
-import com.sun.net.httpserver.HttpContext;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpServer;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.server.handler.ContextHandler;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.InetSocketAddress;
+import java.time.LocalDateTime;
 
 public class App {
 
-    public static void main(String[] args) throws IOException {
-        HttpServer server = HttpServer.create(new InetSocketAddress(8888), 0);
-        HttpContext context = server.createContext("/hello");
-        context.setHandler(App::handleRequest);
+    public static void main(String[] args) throws Exception {
+
+        final ContextHandler context = new ContextHandler("/hello");
+        context.setHandler(new AbstractHandler() {
+            @Override
+            public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException {
+                response.getWriter().println("Hello " + request.getRemoteAddr() + "!");
+
+                response.getWriter().println("Current time: " + LocalDateTime.now());
+
+                baseRequest.setHandled(true);
+            }
+        });
+
+        final String port = System.getenv().getOrDefault("PORT", "8888");
+        final Server server = new Server(Integer.parseInt(port));
+        server.setHandler(context);
         server.start();
+        server.join();
     }
-
-    private static void handleRequest(HttpExchange exchange) throws IOException {
-        String response = "Hello "+ exchange.getRemoteAddress().getAddress() +" !";
-        exchange.sendResponseHeaders(200, response.getBytes().length);//response code and length
-        OutputStream os = exchange.getResponseBody();
-        os.write(response.getBytes());
-        os.close();
-    }
-
 }
