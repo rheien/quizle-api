@@ -1,6 +1,8 @@
 plugins {
     id 'java'
     id 'application'
+    id 'com.brambolt.gradle.rest' version "2022.05.01-7057"
+
 }
 
 group 'org.example'
