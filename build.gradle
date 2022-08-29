@@ -22,7 +22,7 @@ tasks.withType(JavaCompile) {
 }
 
 application {
-    mainClass = 'org.example.quizleapi.App'
+    mainClass = 'org.example.quizleapi.JettyServer'
 }
 
 dependencies {

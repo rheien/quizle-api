@@ -10,7 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
-public class App {
+//setting a server
+public class JettyServer {
 
     public static void main(String[] args) throws Exception {
 
