@@ -26,13 +26,15 @@ jobs:
       - name: 'grant execute permission for gradlew'
         run: chmod +x gradlew
 
-      - name: 'execute gradle build'
-        run: ./gradlew build --scan
+      - name: 'tests'
+        run: ./gradlew test
 
-      - name: 'deploy on netlify'
-        uses: netlify/actions/cli@master
+      - name: 'execute gradle build'
+        run: ./gradlew build
+
+      - name: 'deploy to heroku'
+        uses: akhileshns/heroku-deploy@v3.12.12
         with:
-          args: deploy --dir=build --prod
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          heroku_app_name: quizle-api
