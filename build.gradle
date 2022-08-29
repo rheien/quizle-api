@@ -25,6 +25,12 @@ application {
     mainClass = 'org.example.quizleapi.JettyServer'
 }
 
+tasks.withType(Jar) {
+    manifest {
+        attributes["Main-Class"] = "${application.mainClassName}"
+    }
+}
+
 dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
@@ -36,3 +42,8 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+task stage(dependsOn: ['build', 'clean']){
+
+}
+build.mustRunAfter clean
