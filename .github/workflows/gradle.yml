@@ -32,13 +32,11 @@ jobs:
       - name: 'execute gradle build'
         run: ./gradlew build
 
-      - name: 'login to heroku'
+      - name: 'deploy to heroku'
         uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "quizle-api"
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
-          justlogin: true
 
-      - name: 'check login'
-        run: heroku auth:whoami
+
