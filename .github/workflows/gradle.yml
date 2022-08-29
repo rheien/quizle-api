@@ -32,9 +32,14 @@ jobs:
       - name: 'execute gradle build'
         run: ./gradlew build
 
-      - name: 'deploy to heroku'
+      - name: 'login to heroku'
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
           heroku_app_name: quizle-api
+
+      - name: 'deploy to heroku'
+        run: |
+          heroku git:remote -a quizle-api
+          git push heroku master
