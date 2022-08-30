@@ -1,12 +1,17 @@
-package org.example.quizleapi.api.v1.questions;
+package org.example.quizleapi.api.v1.questions.game;
+
+import org.example.quizleapi.api.v1.questions.questions.Question;
+import org.example.quizleapi.api.v1.questions.questions.QuestionType;
+
+import java.util.ArrayList;
 
 public class Quiz implements Question {
     public static Question questions;
     static int round;
     static int maxRound;
-    private String[] answers;
+    private ArrayList<String> answers;
     private String question;
-    private String[] correctAnswers;
+    private ArrayList<String> correctAnswers;
     private QuestionType questionType;
 
     public Quiz() {
@@ -35,19 +40,19 @@ public class Quiz implements Question {
         this.question = question;
     }
 
-    public String[] answers() {
+    public ArrayList<String> answers() {
         return answers;
     }
 
-    public void setAnswer(String[] answers) {
+    public void setAnswer(ArrayList<String> answers) {
         this.answers = answers;
     }
 
-    public String[] correctAnswers() {
+    public ArrayList<String> correctAnswers() {
         return correctAnswers;
     }
 
-    public void setCorrectAnswers(String[] correctAnswers) {
+    public void setCorrectAnswers(ArrayList<String> correctAnswers) {
         this.correctAnswers = correctAnswers;
     }
 
@@ -59,5 +64,8 @@ public class Quiz implements Question {
         this.questionType = questionType;
     }
 
+    @Override
+    public void question(String question, QuestionType questionType) {
 
+    }
 }

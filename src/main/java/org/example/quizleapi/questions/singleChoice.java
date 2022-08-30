@@ -1,7 +1,5 @@
 package org.example.quizleapi.api.v1.questions.questions;
 
-import org.example.quizleapi.api.v1.questions.game.QuestionType;
-
 import java.util.HashMap;
 import java.util.Map;
 

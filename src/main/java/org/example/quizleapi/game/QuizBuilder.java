@@ -1,4 +1,6 @@
-package org.example.quizleapi.api.v1.questions;
+package org.example.quizleapi.api.v1.questions.game;
+
+import org.example.quizleapi.api.v1.questions.questions.Question;
 
 import java.util.ArrayList;
 
@@ -21,16 +23,15 @@ public class QuizBuilder extends Quiz {
 
     public static Question poseQuestions(Question question) {
 
-        Question questions;
-        String question;
+        ArrayList<Question> questions = new ArrayList<Question>();
 
         for (int index = 0; index < QUESTIONS_PER_TYPE; index++) {
-            int pickNumber = (int) (Math.random() * maxRound);
+            //int pickNumber = (int) (Math.random() * maxRound);
 
-            question = questions[pickNumber];
+            questions.add(question[index]);
 
         }
 
-
+        return questions;
     }
 }
