@@ -1,4 +1,4 @@
-package org.example.quizleapi.api.v1.questions.game;
+package org.example.quizleapi.game;
 
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;

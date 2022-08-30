@@ -1,4 +1,4 @@
-package org.example.quizleapi.api.v1.questions.questions;
+package org.example.quizleapi.questions;
 
 public enum QuestionType {
     FREE_TEXT,

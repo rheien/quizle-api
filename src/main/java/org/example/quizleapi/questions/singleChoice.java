@@ -1,4 +1,4 @@
-package org.example.quizleapi.api.v1.questions.questions;
+package org.example.quizleapi.questions;
 
 import java.util.HashMap;
 import java.util.Map;
