@@ -1,19 +1,21 @@
 package org.example.quizleapi.questions;
 
-public interface Question {
+public class Question {
 
-    //default is 6
-    int requestedQuestions(int numberOfQuestions);
+    public final String question;
+    public final String[] answers;
+    public final String[] correctAnswers;
+    public final QuestionType questionType;
 
+    public Question(String question,
+                    String[] answers,
+                    String[] correctAnswers,
+                    QuestionType questionType) {
 
-    //list of questions for not asking again
-    Question getQuestionsAnsweredCorrectly(Question questionAnsweredCorrectly);
+        this.question = question;
+        this.answers = answers;
+        this.correctAnswers = correctAnswers;
+        this.questionType = questionType;
+    }
 
-
-    //return a set of available questions
-    Question questionsAvailable(int numberOfQuestions, Question questionsAnsweredCorrectly);
-
-
-    //return a set of correctly answered questions
-    Question questionsAlreadyAnswered(Question questionsAnsweredCorrectly);
 }
