@@ -6,6 +6,7 @@ import org.example.quizleapi.questions.SingleChoice;
 import org.example.quizleapi.questions.TextInput;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class RandomQuestionService implements QuestionService {
@@ -19,28 +20,26 @@ public class RandomQuestionService implements QuestionService {
 
         MultipleChoice mCQuestions = new MultipleChoice();
         List<Question> mChoice = mCQuestions.MULTIPLE_CHOICE_QUESTIONS;
-        assembledQuestions.addAll(poseQuestions(mChoice,excludedQuestions));
+        assembledQuestions.addAll(poseQuestions(mChoice, excludedQuestions));
 
         SingleChoice sCQuestions = new SingleChoice();
         List<Question> sChoice = sCQuestions.SINGLE_CHOICE_QUESTIONS;
-        assembledQuestions.addAll(poseQuestions(sChoice,excludedQuestions));
+        assembledQuestions.addAll(poseQuestions(sChoice, excludedQuestions));
 
         TextInput tIQuestions = new TextInput();
         List<Question> freeText = tIQuestions.FREE_TEXT_QUESTIONS;
-        assembledQuestions.addAll(poseQuestions(freeText,excludedQuestions));
-
+        assembledQuestions.addAll(poseQuestions(freeText, excludedQuestions));
 
         return assembledQuestions;
     }
 
-    //TODO: blacklist is missing
-    public List<Question> poseQuestions(List<Question> questions,String[] excludedQuestions) {
+    public List<Question> poseQuestions(List<Question> questions, String[] excludedQuestions) {
         List<Question> assembleQuestions = new ArrayList<Question>();
 
-        Util randomNumber = new Util();
         for (int i = 0; i < QUESTIONS_PER_TYPE; i++) {
             int index = Util.getRandomNumber(questions.size());
-            while (hasBeenPicked(assembleQuestions, questions.get(index))) {
+
+            while (hasBeenPicked(assembleQuestions, questions.get(index)) || shouldBeExcluded(questions.get(index), excludedQuestions)) {
                 index = Util.getRandomNumber(questions.size());
             }
 
@@ -54,5 +53,11 @@ public class RandomQuestionService implements QuestionService {
 
     public boolean hasBeenPicked(List<Question> pickedQuestions, Question newPickQuestion) {
         return pickedQuestions.contains(newPickQuestion);
+    }
+
+    public boolean shouldBeExcluded(Question question, String[] excludedQuestions) {
+        if (excludedQuestions.length == 0) return false;
+
+        return 0 < Arrays.binarySearch(excludedQuestions, question.question);
     }
 }

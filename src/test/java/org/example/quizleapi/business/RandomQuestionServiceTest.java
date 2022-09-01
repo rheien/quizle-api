@@ -42,7 +42,6 @@ class RandomQuestionServiceTest {
         for (Question question : actual) {
             actualQuestions.add(question.question);
         }
-        ;
 
         //does this really check the elements of the lists?
         assertFalse(actualQuestions.containsAll(Arrays.asList(blacklist)));
