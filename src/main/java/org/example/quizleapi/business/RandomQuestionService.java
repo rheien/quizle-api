@@ -8,7 +8,7 @@ import org.example.quizleapi.questions.TextInput;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RandomQuestionService implements QuestionService{
+public class RandomQuestionService implements QuestionService {
 
     static final int QUESTIONS_PER_SET = 6;
     static final int QUESTIONS_PER_TYPE = 2;
@@ -19,27 +19,30 @@ public class RandomQuestionService implements QuestionService{
 
         MultipleChoice mCQuestions = new MultipleChoice();
         List<Question> mChoice = mCQuestions.MULTIPLE_CHOICE_QUESTIONS;
-        assembledQuestions.addAll(poseQuestions(mChoice));
+        assembledQuestions.addAll(poseQuestions(mChoice,excludedQuestions));
 
         SingleChoice sCQuestions = new SingleChoice();
         List<Question> sChoice = sCQuestions.SINGLE_CHOICE_QUESTIONS;
-        assembledQuestions.addAll(poseQuestions(sChoice));
+        assembledQuestions.addAll(poseQuestions(sChoice,excludedQuestions));
 
         TextInput tIQuestions = new TextInput();
         List<Question> freeText = tIQuestions.FREE_TEXT_QUESTIONS;
-        assembledQuestions.addAll(poseQuestions(freeText));
+        assembledQuestions.addAll(poseQuestions(freeText,excludedQuestions));
 
 
         return assembledQuestions;
     }
 
-    //TODO: hasBeenPicked is missing
-    public List<Question> poseQuestions(List<Question> questions){
+    //TODO: blacklist is missing
+    public List<Question> poseQuestions(List<Question> questions,String[] excludedQuestions) {
         List<Question> assembleQuestions = new ArrayList<Question>();
 
         Util randomNumber = new Util();
-        for(int i=0; i< QUESTIONS_PER_TYPE; i++){
+        for (int i = 0; i < QUESTIONS_PER_TYPE; i++) {
             int index = Util.getRandomNumber(questions.size());
+            while (hasBeenPicked(assembleQuestions, questions.get(index))) {
+                index = Util.getRandomNumber(questions.size());
+            }
 
             Question question = questions.get(index);
 
@@ -47,5 +50,9 @@ public class RandomQuestionService implements QuestionService{
         }
 
         return assembleQuestions;
+    }
+
+    public boolean hasBeenPicked(List<Question> pickedQuestions, Question newPickQuestion) {
+        return pickedQuestions.contains(newPickQuestion);
     }
 }

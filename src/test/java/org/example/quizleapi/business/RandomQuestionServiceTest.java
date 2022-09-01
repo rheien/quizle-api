@@ -1,11 +1,13 @@
 package org.example.quizleapi.business;
 
+import org.example.quizleapi.questions.MultipleChoice;
 import org.example.quizleapi.questions.Question;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
 import static org.example.quizleapi.business.RandomQuestionService.QUESTIONS_PER_SET;
+import static org.example.quizleapi.business.RandomQuestionService.QUESTIONS_PER_TYPE;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RandomQuestionServiceTest {
@@ -37,9 +39,10 @@ class RandomQuestionServiceTest {
         List<Question> actual = randomQuestionService.assembleQuestions(numberOfQuestions, blacklist);
 
         List<String> actualQuestions = new ArrayList<String>();
-        for(Question question : actual){
+        for (Question question : actual) {
             actualQuestions.add(question.question);
-        };
+        }
+        ;
 
         //does this really check the elements of the lists?
         assertFalse(actualQuestions.containsAll(Arrays.asList(blacklist)));
@@ -69,26 +72,22 @@ class RandomQuestionServiceTest {
         assertEquals(actual.size(), uniqueQuestions.size());
     }
 
-    /*
+    //add test case for single choice or free text input?
     @Test
-    public void it_should_return_atLeast_1_fromEachAnswerType() {
+    public void poseQuestions_should_return_questionList_fromOneType() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
-        int numberOfQuestions = 0;//QUESTIONS_PER_SET;
+        int numberOfQuestions = QUESTIONS_PER_TYPE;
+        String[] emptyQuestions = new String[]{};
 
-        //how to get the questions?
-        //List<Question> question = (List<Question>) MultipleChoice.MULTIPLE_CHOICE_QUESTIONS.get(0);
+        MultipleChoice mCQuestions = new MultipleChoice();
+        List<Question> mChoice = mCQuestions.MULTIPLE_CHOICE_QUESTIONS;
+        List<Question> actual = randomQuestionService.poseQuestions(mChoice,emptyQuestions);
 
-        String[] entireQuestionList = new String[]{
-
-        };
-
-        Question[] actual = randomQuestionService.assembleQuestions(numberOfQuestions, entireQuestionList);
-
-        assertEquals(0, actual.length);
+        assertEquals(numberOfQuestions, actual.size());
     }
 
-
+/*
     @Test
     public void () {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
