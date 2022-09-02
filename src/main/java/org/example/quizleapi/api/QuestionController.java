@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class QuestionController extends AbstractHandler {
@@ -26,16 +25,16 @@ public class QuestionController extends AbstractHandler {
 
     @Override
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
         response.getWriter().println("Hello " + request.getRemoteAddr() + "!");
 
         response.getWriter().println("Current time: " + LocalDateTime.now());
 
         List<Question> questions = questionService.assembleQuestions(6,new String[]{});
-
-        response.getWriter().println("Questions: " + Arrays.toString(questions.toArray()));
-
-        for (Question question : questions) {
-             response.getWriter().println(question);
+        for (int i = 0; i < questions.size(); i++) {
+            response.getWriter().println(questions.get(i).question);
         }
 
         response.getWriter().println();
