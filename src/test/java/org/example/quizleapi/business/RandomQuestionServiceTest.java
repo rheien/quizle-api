@@ -2,8 +2,11 @@ package org.example.quizleapi.business;
 
 import org.example.quizleapi.questions.MultipleChoice;
 import org.example.quizleapi.questions.Question;
+import org.example.quizleapi.questions.SingleChoice;
+import org.example.quizleapi.questions.TextInput;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.*;
 
 import static org.example.quizleapi.business.RandomQuestionService.QUESTIONS_PER_SET;
@@ -82,7 +85,7 @@ class RandomQuestionServiceTest {
         assertEquals(QUESTIONS_PER_TYPE, actual.size());
     }
 
-
+    //TODO: change or add test case for minimum available questions
     @Test
     public void assembleQuestions_should_return_empty_noQuestionAvailable() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
@@ -95,5 +98,36 @@ class RandomQuestionServiceTest {
         List<Question> actual = randomQuestionService.assembleQuestions(QUESTIONS_PER_SET, entireQuestions);
 
         assertTrue(actual.isEmpty());
+    }
+
+    @Test
+    public void assembleQuestions_should_return_empty_byNull() {
+        RandomQuestionService randomQuestionService = new RandomQuestionService();
+
+        String[] nullQuestions = null;
+        List<Question> actual = randomQuestionService.assembleQuestions(QUESTIONS_PER_SET, nullQuestions);
+
+        assertTrue(actual.isEmpty());
+    }
+
+    @Test
+    public void validNumber_should_throw_negativeNumber() throws IOException {
+        RandomQuestionService randomQuestionService = new RandomQuestionService();
+        int randomNumber = Util.getRandomNumber(10000);
+        int invalidNumber = -(randomNumber);
+
+        assertThrows(IOException.class, () -> randomQuestionService.validNumber(invalidNumber));
+    }
+
+    @Test
+    public void validNumber_should_throw_byHighNumber() throws IOException {
+        RandomQuestionService randomQuestionService = new RandomQuestionService();
+        int randomNumber = Util.getRandomNumber(10000);
+        randomNumber += TextInput.FREE_TEXT_QUESTIONS.size() +
+                SingleChoice.SINGLE_CHOICE_QUESTIONS.size() +
+                MultipleChoice.MULTIPLE_CHOICE_QUESTIONS.size();
+        int invalidNumber = randomNumber;
+
+        assertThrows(IOException.class, () -> randomQuestionService.validNumber(invalidNumber));
     }
 }

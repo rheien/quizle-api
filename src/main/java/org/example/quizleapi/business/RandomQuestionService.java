@@ -1,10 +1,12 @@
 package org.example.quizleapi.business;
 
+import org.eclipse.jetty.util.IO;
 import org.example.quizleapi.questions.MultipleChoice;
 import org.example.quizleapi.questions.Question;
 import org.example.quizleapi.questions.SingleChoice;
 import org.example.quizleapi.questions.TextInput;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +19,9 @@ public class RandomQuestionService implements QuestionService {
     @Override
     public List<Question> assembleQuestions(int numberOfQuestions, String[] excludedQuestions) {
         List<Question> assembledQuestions = new ArrayList<>();
+
+        if (excludedQuestions == null) return assembledQuestions;
+
 
         //TODO: refactor to seperate class
         List<Question> mChoice = MultipleChoice.MULTIPLE_CHOICE_QUESTIONS;
@@ -40,16 +45,16 @@ public class RandomQuestionService implements QuestionService {
         return assembledQuestions;
     }
 
-    //TODO: return something better than an empty list
-    /*
-    public List<Question> questionAssembler(List<Question> questions, String[] excludedQuestions) {
-        if (!enoughQuestionsLeft(questions, excludedQuestions)) {
-            return new ArrayList<Question>();
+    public boolean validNumber(int numberOfQuestions) throws IOException {
+        if (numberOfQuestions < 0) {
+            throw new IOException("Invalid number");
+        } else if (numberOfQuestions > (TextInput.FREE_TEXT_QUESTIONS.size() +
+                SingleChoice.SINGLE_CHOICE_QUESTIONS.size() +
+                MultipleChoice.MULTIPLE_CHOICE_QUESTIONS.size())) {
+            throw new IOException("So many questions aren't available");
         }
-        return poseQuestions(questions, excludedQuestions);
+        return numberOfQuestions > 0;
     }
-    */
-
 
     public List<Question> poseQuestions(List<Question> questions, String[] excludedQuestions) {
         List<Question> assembleQuestions = new ArrayList<Question>();
