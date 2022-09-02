@@ -18,19 +18,24 @@ public class RandomQuestionService implements QuestionService {
     public List<Question> assembleQuestions(int numberOfQuestions, String[] excludedQuestions) {
         List<Question> assembledQuestions = new ArrayList<>();
 
-        MultipleChoice mCQuestions = new MultipleChoice();
-        List<Question> mChoice = mCQuestions.MULTIPLE_CHOICE_QUESTIONS;
-        assembledQuestions.addAll(poseQuestions(mChoice, excludedQuestions));
+        List<Question> mChoice = MultipleChoice.MULTIPLE_CHOICE_QUESTIONS;
+        assembledQuestions.addAll(questionAssembler(mChoice, excludedQuestions));
 
-        SingleChoice sCQuestions = new SingleChoice();
-        List<Question> sChoice = sCQuestions.SINGLE_CHOICE_QUESTIONS;
-        assembledQuestions.addAll(poseQuestions(sChoice, excludedQuestions));
+        List<Question> sChoice = SingleChoice.SINGLE_CHOICE_QUESTIONS;
+        assembledQuestions.addAll(questionAssembler(sChoice, excludedQuestions));
 
-        TextInput tIQuestions = new TextInput();
-        List<Question> freeText = tIQuestions.FREE_TEXT_QUESTIONS;
-        assembledQuestions.addAll(poseQuestions(freeText, excludedQuestions));
+        List<Question> freeText = TextInput.FREE_TEXT_QUESTIONS;
+        assembledQuestions.addAll(questionAssembler(freeText, excludedQuestions));
 
         return assembledQuestions;
+    }
+
+    //TODO: return something better than an empty list
+    public List<Question> questionAssembler(List<Question> questions, String[] excludedQuestions) {
+        if (!enoughQuestionsLeft(questions, excludedQuestions)) {
+            return new ArrayList<Question>();
+        }
+        return poseQuestions(questions, excludedQuestions);
     }
 
     public List<Question> poseQuestions(List<Question> questions, String[] excludedQuestions) {
@@ -42,12 +47,9 @@ public class RandomQuestionService implements QuestionService {
             while (hasBeenPicked(assembleQuestions, questions.get(index)) || shouldBeExcluded(questions.get(index), excludedQuestions)) {
                 index = Util.getRandomNumber(questions.size());
             }
-
             Question question = questions.get(index);
-
             assembleQuestions.add(question);
         }
-
         return assembleQuestions;
     }
 
@@ -59,5 +61,17 @@ public class RandomQuestionService implements QuestionService {
         if (excludedQuestions.length == 0) return false;
 
         return 0 < Arrays.binarySearch(excludedQuestions, question.question);
+    }
+
+    public boolean enoughQuestionsLeft(List<Question> questions, String[] excludedQuestions) {
+        if (excludedQuestions.length == 0) return true;
+
+        List<Question> checkedQuestions = new ArrayList<Question>();
+        for (Question question : questions) {
+            if (0 < Arrays.binarySearch(excludedQuestions, question.question)) {
+                checkedQuestions.add(question);
+            }
+        }
+        return checkedQuestions.size() >= QUESTIONS_PER_TYPE;
     }
 }

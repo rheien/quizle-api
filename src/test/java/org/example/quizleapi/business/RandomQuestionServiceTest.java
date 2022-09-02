@@ -81,7 +81,7 @@ class RandomQuestionServiceTest {
 
         MultipleChoice mCQuestions = new MultipleChoice();
         List<Question> mChoice = mCQuestions.MULTIPLE_CHOICE_QUESTIONS;
-        List<Question> actual = randomQuestionService.poseQuestions(mChoice,emptyQuestions);
+        List<Question> actual = randomQuestionService.poseQuestions(mChoice, emptyQuestions);
 
         assertEquals(numberOfQuestions, actual.size());
     }
