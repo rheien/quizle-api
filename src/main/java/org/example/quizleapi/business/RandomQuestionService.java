@@ -13,7 +13,7 @@ import java.util.List;
 
 public class RandomQuestionService implements QuestionService {
 
-    static final int QUESTIONS_PER_SET = 6;
+    //TODO: how to change so that at least one of each type is been picked
     static final int QUESTIONS_PER_TYPE = 2;
 
     @Override

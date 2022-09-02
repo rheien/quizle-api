@@ -9,13 +9,16 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.*;
 
-import static org.example.quizleapi.business.RandomQuestionService.QUESTIONS_PER_SET;
 import static org.example.quizleapi.business.RandomQuestionService.QUESTIONS_PER_TYPE;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RandomQuestionServiceTest {
 
-    //test cases simpler formulieren
+    //TODO: randomize number?
+    static final int QUESTIONS_PER_SET = 6;
+
+
+    //TODO: test cases simpler formulieren
     @Test
     public void withNumberOfQuestions_and_emptyBlacklist_it_should_return_aQuestionList() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
@@ -45,7 +48,7 @@ class RandomQuestionServiceTest {
             actualQuestions.add(question.question);
         }
 
-        //does this really check the elements of the lists?
+        //TODO: does this really check the elements of the lists?
         assertFalse(actualQuestions.containsAll(Arrays.asList(blacklist)));
     }
 
@@ -72,7 +75,7 @@ class RandomQuestionServiceTest {
         assertEquals(actual.size(), uniqueQuestions.size());
     }
 
-    //add test case for single choice or free text input?
+    //TODO: add test case for single choice or free text input?
     @Test
     public void poseQuestions_should_return_questionList_fromOneType() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
@@ -113,21 +116,22 @@ class RandomQuestionServiceTest {
     @Test
     public void validNumber_should_throw_negativeNumber() throws IOException {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
-        int randomNumber = Util.getRandomNumber(10000);
-        int invalidNumber = -(randomNumber);
 
-        assertThrows(IOException.class, () -> randomQuestionService.validNumber(invalidNumber));
+        int negativeNumber = -(Util.getRandomNumber(10000));
+
+        assertThrows(IOException.class, () -> randomQuestionService.validNumber(negativeNumber));
     }
 
     @Test
     public void validNumber_should_throw_byHighNumber() throws IOException {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
-        int randomNumber = Util.getRandomNumber(10000);
-        randomNumber += TextInput.FREE_TEXT_QUESTIONS.size() +
+
+        int highNumber = Util.getRandomNumber(10000);
+        highNumber += TextInput.FREE_TEXT_QUESTIONS.size() +
                 SingleChoice.SINGLE_CHOICE_QUESTIONS.size() +
                 MultipleChoice.MULTIPLE_CHOICE_QUESTIONS.size();
-        int invalidNumber = randomNumber;
 
-        assertThrows(IOException.class, () -> randomQuestionService.validNumber(invalidNumber));
+        int finalHighNumber = highNumber;
+        assertThrows(IOException.class, () -> randomQuestionService.validNumber(finalHighNumber));
     }
 }
