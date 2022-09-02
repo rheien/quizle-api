@@ -1,6 +1,5 @@
 package org.example.quizleapi.business;
 
-import org.eclipse.jetty.util.IO;
 import org.example.quizleapi.questions.MultipleChoice;
 import org.example.quizleapi.questions.Question;
 import org.example.quizleapi.questions.SingleChoice;
@@ -13,7 +12,7 @@ import java.util.List;
 
 public class RandomQuestionService implements QuestionService {
 
-    //TODO: how to change so that at least one of each type is been picked
+    //TODO: how to change so that at least one of each type is been picked?
     static final int QUESTIONS_PER_TYPE = 2;
 
     @Override
@@ -45,7 +44,7 @@ public class RandomQuestionService implements QuestionService {
         return assembledQuestions;
     }
 
-    public boolean validNumber(int numberOfQuestions) throws IOException {
+    public void validNumber(int numberOfQuestions) throws IOException {
         if (numberOfQuestions < 0) {
             throw new IOException("Invalid number");
         } else if (numberOfQuestions > (TextInput.FREE_TEXT_QUESTIONS.size() +
@@ -53,7 +52,6 @@ public class RandomQuestionService implements QuestionService {
                 MultipleChoice.MULTIPLE_CHOICE_QUESTIONS.size())) {
             throw new IOException("So many questions aren't available");
         }
-        return numberOfQuestions > 0;
     }
 
     public List<Question> poseQuestions(List<Question> questions, String[] excludedQuestions) {

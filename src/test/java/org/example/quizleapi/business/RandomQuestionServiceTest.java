@@ -20,7 +20,7 @@ class RandomQuestionServiceTest {
 
     //TODO: test cases simpler formulieren
     @Test
-    public void withNumberOfQuestions_and_emptyBlacklist_it_should_return_aQuestionList() {
+    public void assembleQuestions_should_return_aQuestionList() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
         int numberOfQuestions = QUESTIONS_PER_SET;
@@ -31,7 +31,7 @@ class RandomQuestionServiceTest {
     }
 
     @Test
-    public void withNumberOfQuestions_and_dependentOnTheBlacklist_it_should_return_aQuestionList() {
+    public void assembleQuestions_should_return_aQuestionList_withoutExcludedQuestions() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
         String[] blacklist = new String[]{"Wie lautet der Vorname von Frau Springer?",
@@ -53,7 +53,7 @@ class RandomQuestionServiceTest {
     }
 
     @Test
-    public void assembleQuestions_should_return_two_randomQuestionLists() {
+    public void assembleQuestions_should_return_twoRandomQuestionLists() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
         int numberOfQuestions = QUESTIONS_PER_SET;
@@ -82,29 +82,30 @@ class RandomQuestionServiceTest {
 
         String[] emptyQuestions = new String[]{};
 
-        List<Question> mChoice = MultipleChoice.MULTIPLE_CHOICE_QUESTIONS;
-        List<Question> actual = randomQuestionService.poseQuestions(mChoice, emptyQuestions);
+        List<Question> mChoiceQuestions = MultipleChoice.MULTIPLE_CHOICE_QUESTIONS;
+        List<Question> actual = randomQuestionService.poseQuestions(mChoiceQuestions, emptyQuestions);
 
         assertEquals(QUESTIONS_PER_TYPE, actual.size());
     }
 
-    //TODO: change or add test case for minimum available questions
+    //TODO: change or add test case for minimum available questions?
     @Test
-    public void assembleQuestions_should_return_empty_noQuestionAvailable() {
+    public void assembleQuestions_should_return_emptyList_noQuestionAvailable() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
-        List<Question> mChoice = MultipleChoice.MULTIPLE_CHOICE_QUESTIONS;
-        String[] entireQuestions = new String[mChoice.size()];
-        mChoice.forEach((question) -> {
-            entireQuestions[mChoice.indexOf(question)] = question.question;
+        List<Question> mChoiceQuestions = MultipleChoice.MULTIPLE_CHOICE_QUESTIONS;
+        String[] entireQuestions = new String[mChoiceQuestions.size()];
+        mChoiceQuestions.forEach((question) -> {
+            entireQuestions[mChoiceQuestions.indexOf(question)] = question.question;
         });
+
         List<Question> actual = randomQuestionService.assembleQuestions(QUESTIONS_PER_SET, entireQuestions);
 
         assertTrue(actual.isEmpty());
     }
 
     @Test
-    public void assembleQuestions_should_return_empty_byNull() {
+    public void assembleQuestions_should_return_emptyList_byNull() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
         String[] nullQuestions = null;

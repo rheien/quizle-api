@@ -4,11 +4,15 @@ import org.example.quizleapi.business.QuestionService;
 
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.example.quizleapi.questions.Question;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class QuestionController extends AbstractHandler {
 
@@ -25,6 +29,16 @@ public class QuestionController extends AbstractHandler {
         response.getWriter().println("Hello " + request.getRemoteAddr() + "!");
 
         response.getWriter().println("Current time: " + LocalDateTime.now());
+
+        List<Question> questions = questionService.assembleQuestions(6,new String[]{});
+
+        response.getWriter().println("Questions: " + Arrays.toString(questions.toArray()));
+
+        for (Question question : questions) {
+             response.getWriter().println(question);
+        }
+
+        response.getWriter().println();
 
         baseRequest.setHandled(true);
     }

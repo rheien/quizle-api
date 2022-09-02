@@ -24,7 +24,7 @@ tasks.withType(JavaCompile) {
 }
 
 application {
-    mainClass = 'org.example.quizleapi.JettyServer'
+    mainClass = 'org.example.quizleapi.QuizleApi'
 }
 
 tasks.withType(Jar) {
