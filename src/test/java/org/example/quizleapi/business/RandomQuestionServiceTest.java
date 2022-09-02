@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class RandomQuestionServiceTest {
 
-    //simpler formulieren
+    //test cases simpler formulieren
     @Test
     public void withNumberOfQuestions_and_emptyBlacklist_it_should_return_aQuestionList() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
@@ -28,7 +28,6 @@ class RandomQuestionServiceTest {
     public void withNumberOfQuestions_and_dependentOnTheBlacklist_it_should_return_aQuestionList() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
-        int numberOfQuestions = QUESTIONS_PER_SET;
         String[] blacklist = new String[]{"Wie lautet der Vorname von Frau Springer?",
                 "Wie heißt die nicht frittierte Variante von der Frühlingsrolle?",
                 "Was meint der Berliner mit 'Dit ist mir Wurscht wie Stulle!' nicht?",
@@ -36,7 +35,7 @@ class RandomQuestionServiceTest {
                 "Wie schreibt man",
                 "Sich über eine ... aufregen."
         };
-        List<Question> actual = randomQuestionService.assembleQuestions(numberOfQuestions, blacklist);
+        List<Question> actual = randomQuestionService.assembleQuestions(QUESTIONS_PER_SET, blacklist);
 
         List<String> actualQuestions = new ArrayList<String>();
         for (Question question : actual) {
@@ -48,7 +47,7 @@ class RandomQuestionServiceTest {
     }
 
     @Test
-    public void it_should_return_two_randomQuestionLists() {
+    public void assembleQuestions_should_return_two_randomQuestionLists() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
         int numberOfQuestions = QUESTIONS_PER_SET;
@@ -60,12 +59,11 @@ class RandomQuestionServiceTest {
     }
 
     @Test
-    public void it_should_return_noDuplicateQuestions() {
+    public void assembleQuestions_should_return_noDuplicateQuestions() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
-        int numberOfQuestions = QUESTIONS_PER_SET;
         String[] emptyQuestions = new String[]{};
-        List<Question> actual = randomQuestionService.assembleQuestions(numberOfQuestions, emptyQuestions);
+        List<Question> actual = randomQuestionService.assembleQuestions(QUESTIONS_PER_SET, emptyQuestions);
         Set<Question> uniqueQuestions = new HashSet<Question>(actual);
 
         assertEquals(actual.size(), uniqueQuestions.size());
@@ -76,31 +74,26 @@ class RandomQuestionServiceTest {
     public void poseQuestions_should_return_questionList_fromOneType() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
-        int numberOfQuestions = QUESTIONS_PER_TYPE;
         String[] emptyQuestions = new String[]{};
 
-        MultipleChoice mCQuestions = new MultipleChoice();
-        List<Question> mChoice = mCQuestions.MULTIPLE_CHOICE_QUESTIONS;
+        List<Question> mChoice = MultipleChoice.MULTIPLE_CHOICE_QUESTIONS;
         List<Question> actual = randomQuestionService.poseQuestions(mChoice, emptyQuestions);
 
-        assertEquals(numberOfQuestions, actual.size());
+        assertEquals(QUESTIONS_PER_TYPE, actual.size());
     }
 
-/*
+
     @Test
-    public void () {
+    public void assembleQuestions_should_return_empty_noQuestionAvailable() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
-        int numberOfQuestions = 0;//QUESTIONS_PER_SET;
-        String[] emptyQuestions = new String[]{};
-        Question[] actual = randomQuestionService.assembleQuestions(numberOfQuestions, emptyQuestions);
+        List<Question> mChoice = MultipleChoice.MULTIPLE_CHOICE_QUESTIONS;
+        String[] entireQuestions = new String[mChoice.size()];
+        mChoice.forEach((question) -> {
+            entireQuestions[mChoice.indexOf(question)] = question.question;
+        });
+        List<Question> actual = randomQuestionService.assembleQuestions(QUESTIONS_PER_SET, entireQuestions);
 
-        assertEquals(numberOfQuestions, actual.length);
+        assertTrue(actual.isEmpty());
     }
-
-Util randomNumber = new Util();
-        int numberOfQuestions = Util.getRandomNumber(QUESTIONS_PER_SET);
-
-    */
-
 }

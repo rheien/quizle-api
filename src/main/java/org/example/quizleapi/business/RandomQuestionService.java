@@ -18,25 +18,38 @@ public class RandomQuestionService implements QuestionService {
     public List<Question> assembleQuestions(int numberOfQuestions, String[] excludedQuestions) {
         List<Question> assembledQuestions = new ArrayList<>();
 
+        //TODO: refactor to seperate class
         List<Question> mChoice = MultipleChoice.MULTIPLE_CHOICE_QUESTIONS;
-        assembledQuestions.addAll(questionAssembler(mChoice, excludedQuestions));
+        if (!enoughQuestionsLeft(mChoice, excludedQuestions)) {
+            return new ArrayList<Question>();
+        }
+        assembledQuestions.addAll(poseQuestions(mChoice, excludedQuestions));
 
         List<Question> sChoice = SingleChoice.SINGLE_CHOICE_QUESTIONS;
-        assembledQuestions.addAll(questionAssembler(sChoice, excludedQuestions));
+        if (!enoughQuestionsLeft(sChoice, excludedQuestions)) {
+            return new ArrayList<Question>();
+        }
+        assembledQuestions.addAll(poseQuestions(sChoice, excludedQuestions));
 
         List<Question> freeText = TextInput.FREE_TEXT_QUESTIONS;
-        assembledQuestions.addAll(questionAssembler(freeText, excludedQuestions));
+        if (!enoughQuestionsLeft(freeText, excludedQuestions)) {
+            return new ArrayList<Question>();
+        }
+        assembledQuestions.addAll(poseQuestions(freeText, excludedQuestions));
 
         return assembledQuestions;
     }
 
     //TODO: return something better than an empty list
+    /*
     public List<Question> questionAssembler(List<Question> questions, String[] excludedQuestions) {
         if (!enoughQuestionsLeft(questions, excludedQuestions)) {
             return new ArrayList<Question>();
         }
         return poseQuestions(questions, excludedQuestions);
     }
+    */
+
 
     public List<Question> poseQuestions(List<Question> questions, String[] excludedQuestions) {
         List<Question> assembleQuestions = new ArrayList<Question>();
@@ -68,8 +81,11 @@ public class RandomQuestionService implements QuestionService {
 
         List<Question> checkedQuestions = new ArrayList<Question>();
         for (Question question : questions) {
-            if (0 < Arrays.binarySearch(excludedQuestions, question.question)) {
-                checkedQuestions.add(question);
+
+            for (String exclQuestion : excludedQuestions) {
+                if (exclQuestion.equals(question.question)) {
+                    checkedQuestions.add(question);
+                }
             }
         }
         return checkedQuestions.size() >= QUESTIONS_PER_TYPE;
