@@ -24,8 +24,8 @@ class RandomQuestionServiceTest {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
         int numberOfQuestions = QUESTIONS_PER_SET;
-        String[] emptyQuestions = new String[]{};
-        List<Question> actual = randomQuestionService.assembleQuestions(numberOfQuestions, emptyQuestions);
+        UUID[] emptyIDs = new UUID[]{};
+        List<Question> actual = randomQuestionService.assembleQuestions(numberOfQuestions, emptyIDs);
 
         assertTrue(numberOfQuestions == actual.size());
     }
@@ -34,15 +34,17 @@ class RandomQuestionServiceTest {
     public void assembleQuestions_should_return_aQuestionList_withoutExcludedQuestions() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
-        String[] blacklist = new String[]{"Wie lautet der Vorname von Frau Springer?",
-                "Wie heißt die nicht frittierte Variante von der Frühlingsrolle?",
-                "Was meint der Berliner mit 'Dit ist mir Wurscht wie Stulle!' nicht?",
-                "Pi = 3,1415...",
-                "Wie schreibt man",
-                "Sich über eine ... aufregen."
+        UUID[] blacklist = new UUID[]{
+                UUID.fromString("DAF33C83-C546-47BA-9112-87DE0FD4A7BC"),
+                UUID.fromString("AB47EBD7-8F8D-4567-8FBC-3546C3BFCBD9"),
+                UUID.fromString("2D7CDAD4-A3D0-41A9-BCE7-DF6F74D92777"),
+                UUID.fromString("091052D0-F0A8-48BC-A3FE-39259D313844"),
+                UUID.fromString("2FBA748A-C49A-40C0-B8FF-E0F8D32BD83D"),
+                UUID.fromString("4CCC19A1-4227-4DE8-919F-4E0E1A8EB701")
         };
         List<Question> actual = randomQuestionService.assembleQuestions(QUESTIONS_PER_SET, blacklist);
 
+        /*
         List<String> actualQuestions = new ArrayList<String>();
         for (Question question : actual) {
             actualQuestions.add(question.question);
@@ -50,6 +52,9 @@ class RandomQuestionServiceTest {
 
         //TODO: does this really check the elements of the lists?
         assertFalse(actualQuestions.containsAll(Arrays.asList(blacklist)));
+
+         */
+        assertFalse(actual.equals(blacklist));
     }
 
     @Test
@@ -57,9 +62,9 @@ class RandomQuestionServiceTest {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
         int numberOfQuestions = QUESTIONS_PER_SET;
-        String[] emptyQuestions = new String[]{};
-        List<Question> questionList1 = randomQuestionService.assembleQuestions(numberOfQuestions, emptyQuestions);
-        List<Question> questionList2 = randomQuestionService.assembleQuestions(numberOfQuestions, emptyQuestions);
+        UUID[] emptyIDs = new UUID[]{};
+        List<Question> questionList1 = randomQuestionService.assembleQuestions(numberOfQuestions, emptyIDs);
+        List<Question> questionList2 = randomQuestionService.assembleQuestions(numberOfQuestions, emptyIDs);
 
         assertNotEquals(questionList1, questionList2);
     }
@@ -68,8 +73,8 @@ class RandomQuestionServiceTest {
     public void assembleQuestions_should_return_noDuplicateQuestions() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
-        String[] emptyQuestions = new String[]{};
-        List<Question> actual = randomQuestionService.assembleQuestions(QUESTIONS_PER_SET, emptyQuestions);
+        UUID[] emptyIDs = new UUID[]{};
+        List<Question> actual = randomQuestionService.assembleQuestions(QUESTIONS_PER_SET, emptyIDs);
         Set<Question> uniqueQuestions = new HashSet<Question>(actual);
 
         assertEquals(actual.size(), uniqueQuestions.size());
@@ -80,10 +85,10 @@ class RandomQuestionServiceTest {
     public void poseQuestions_should_return_questionList_fromOneType() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
-        String[] emptyQuestions = new String[]{};
+        UUID[] emptyIDs = new UUID[]{};
 
         List<Question> mChoiceQuestions = MultipleChoice.MULTIPLE_CHOICE_QUESTIONS;
-        List<Question> actual = randomQuestionService.poseQuestions(mChoiceQuestions, emptyQuestions);
+        List<Question> actual = randomQuestionService.poseQuestions(mChoiceQuestions, emptyIDs);
 
         assertEquals(QUESTIONS_PER_TYPE, actual.size());
     }
@@ -94,12 +99,12 @@ class RandomQuestionServiceTest {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
         List<Question> mChoiceQuestions = MultipleChoice.MULTIPLE_CHOICE_QUESTIONS;
-        String[] entireQuestions = new String[mChoiceQuestions.size()];
+        UUID[] entireListOfIDs = new UUID[mChoiceQuestions.size()];
         mChoiceQuestions.forEach((question) -> {
-            entireQuestions[mChoiceQuestions.indexOf(question)] = question.question;
+            entireListOfIDs[mChoiceQuestions.indexOf(question)] = question.id;
         });
 
-        List<Question> actual = randomQuestionService.assembleQuestions(QUESTIONS_PER_SET, entireQuestions);
+        List<Question> actual = randomQuestionService.assembleQuestions(QUESTIONS_PER_SET, entireListOfIDs);
 
         assertTrue(actual.isEmpty());
     }
@@ -108,8 +113,8 @@ class RandomQuestionServiceTest {
     public void assembleQuestions_should_return_emptyList_byNull() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
-        String[] nullQuestions = null;
-        List<Question> actual = randomQuestionService.assembleQuestions(QUESTIONS_PER_SET, nullQuestions);
+        UUID[] nullIDs = null;
+        List<Question> actual = randomQuestionService.assembleQuestions(QUESTIONS_PER_SET, nullIDs);
 
         assertTrue(actual.isEmpty());
     }

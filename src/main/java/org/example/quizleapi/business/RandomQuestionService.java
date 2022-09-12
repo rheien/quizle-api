@@ -9,37 +9,37 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 public class RandomQuestionService implements QuestionService {
 
     //TODO: how to change so that at least one of each type is been picked?
     static final int QUESTIONS_PER_TYPE = 2;
 
-    @Override
-    public List<Question> assembleQuestions(int numberOfQuestions, String[] excludedQuestions) {
+    public List<Question> assembleQuestions(int numberOfQuestions, UUID[] excludedIDs) {
         List<Question> assembledQuestions = new ArrayList<>();
 
-        if (excludedQuestions == null) return assembledQuestions;
+        if (excludedIDs == null) return assembledQuestions;
 
 
         //TODO: refactor to seperate class
         List<Question> mChoice = MultipleChoice.MULTIPLE_CHOICE_QUESTIONS;
-        if (!enoughQuestionsLeft(mChoice, excludedQuestions)) {
+        if (!enoughQuestionsLeft(mChoice, excludedIDs)) {
             return new ArrayList<Question>();
         }
-        assembledQuestions.addAll(poseQuestions(mChoice, excludedQuestions));
+        assembledQuestions.addAll(poseQuestions(mChoice, excludedIDs));
 
         List<Question> sChoice = SingleChoice.SINGLE_CHOICE_QUESTIONS;
-        if (!enoughQuestionsLeft(sChoice, excludedQuestions)) {
+        if (!enoughQuestionsLeft(sChoice, excludedIDs)) {
             return new ArrayList<Question>();
         }
-        assembledQuestions.addAll(poseQuestions(sChoice, excludedQuestions));
+        assembledQuestions.addAll(poseQuestions(sChoice, excludedIDs));
 
         List<Question> freeText = TextInput.FREE_TEXT_QUESTIONS;
-        if (!enoughQuestionsLeft(freeText, excludedQuestions)) {
+        if (!enoughQuestionsLeft(freeText, excludedIDs)) {
             return new ArrayList<Question>();
         }
-        assembledQuestions.addAll(poseQuestions(freeText, excludedQuestions));
+        assembledQuestions.addAll(poseQuestions(freeText, excludedIDs));
 
         return assembledQuestions;
     }
@@ -54,13 +54,16 @@ public class RandomQuestionService implements QuestionService {
         }
     }
 
-    public List<Question> poseQuestions(List<Question> questions, String[] excludedQuestions) {
+    public List<Question> poseQuestions(List<Question> questions, UUID[] excludedIDs) {
         List<Question> assembleQuestions = new ArrayList<Question>();
 
         for (int i = 0; i < QUESTIONS_PER_TYPE; i++) {
             int index = Util.getRandomNumber(questions.size());
 
-            while (hasBeenPicked(assembleQuestions, questions.get(index)) || shouldBeExcluded(questions.get(index), excludedQuestions)) {
+
+
+            while (hasBeenPicked(assembleQuestions, questions.get(index)) ||
+                    shouldBeExcluded(excludedIDs, questions.get(index))) {
                 index = Util.getRandomNumber(questions.size());
             }
             Question question = questions.get(index);
@@ -70,23 +73,22 @@ public class RandomQuestionService implements QuestionService {
     }
 
     public boolean hasBeenPicked(List<Question> pickedQuestions, Question newPickQuestion) {
-        return pickedQuestions.contains(newPickQuestion);
+        return pickedQuestions.equals(newPickQuestion.id);
     }
 
-    public boolean shouldBeExcluded(Question question, String[] excludedQuestions) {
-        if (excludedQuestions.length == 0) return false;
-
-        return 0 < Arrays.binarySearch(excludedQuestions, question.question);
+    public boolean shouldBeExcluded(UUID[] excludedIDs, Question question) {
+        List<UUID> exQuestions = Arrays.asList(excludedIDs);
+        return exQuestions.equals(question.id);
     }
 
-    public boolean enoughQuestionsLeft(List<Question> questions, String[] excludedQuestions) {
-        if (excludedQuestions.length == 0) return true;
+    public boolean enoughQuestionsLeft(List<Question> questions, UUID[] excludedIDs) {
+        if (excludedIDs.length == 0) return true;
 
         List<Question> checkedQuestions = new ArrayList<Question>();
         for (Question question : questions) {
 
-            for (String exclQuestion : excludedQuestions) {
-                if (exclQuestion.equals(question.question)) {
+            for (UUID exclQuestion : excludedIDs) {
+                if (exclQuestion.equals(question.id)) {
                     checkedQuestions.add(question);
                 }
             }

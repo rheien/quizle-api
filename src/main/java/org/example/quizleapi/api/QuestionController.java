@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 import java.util.List;
+import java.util.UUID;
 
 public class QuestionController extends AbstractHandler {
 
@@ -32,9 +33,9 @@ public class QuestionController extends AbstractHandler {
 
         response.getWriter().println("Current time: " + LocalDateTime.now());
 
-        List<Question> questions = questionService.assembleQuestions(6,new String[]{});
+        List<Question> questions = questionService.assembleQuestions(6,new UUID[]{});
         for (int i = 0; i < questions.size(); i++) {
-            response.getWriter().println(questions.get(i).question);
+            response.getWriter().println(questions.get(i).id);
         }
 
         response.getWriter().println();
