@@ -14,8 +14,6 @@ class RandomQuestionServiceTest {
     //TODO: randomize number?
     static final int QUESTIONS_PER_SET = 6;
 
-
-    //TODO: test cases simpler formulieren
     @Test
     public void assembleQuestions_should_return_aQuestionList() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
@@ -24,7 +22,7 @@ class RandomQuestionServiceTest {
         UUID[] emptyIDs = new UUID[]{};
         List<Question> actual = randomQuestionService.assembleQuestions(numberOfQuestions, emptyIDs);
 
-        assertTrue(numberOfQuestions == actual.size());
+        assertEquals(numberOfQuestions, actual.size());
     }
 
     @Test
@@ -39,9 +37,15 @@ class RandomQuestionServiceTest {
                 UUID.fromString("2FBA748A-C49A-40C0-B8FF-E0F8D32BD83D"),
                 UUID.fromString("4CCC19A1-4227-4DE8-919F-4E0E1A8EB701")
         };
-        List<Question> actual = randomQuestionService.assembleQuestions(QUESTIONS_PER_SET, blacklist);
 
-        assertFalse(actual.equals(blacklist));
+        List<Question> questions = randomQuestionService.assembleQuestions(QUESTIONS_PER_SET, blacklist);
+        List<UUID> ids = new ArrayList<>();
+        for (Question question : questions) {
+            ids.add(question.id);
+        }
+        UUID[] actual = ids.toArray(new UUID[ids.size()]);
+
+        assertFalse(Arrays.equals(actual, blacklist));
     }
 
     @Test
@@ -143,7 +147,6 @@ class RandomQuestionServiceTest {
                         QuestionType.FREE_TEXT
                 )
         );
-
         UUID pickedSameID = UUID.fromString("4CCC19A1-4227-4DE8-919F-4E0E1A8EB701");
 
         boolean actual = randomQuestionService.hasBeenPicked(pickedQuestions, pickedSameID);
@@ -165,11 +168,9 @@ class RandomQuestionServiceTest {
                 UUID.fromString("2FBA748A-C49A-40C0-B8FF-E0F8D32BD83D"),
                 UUID.fromString("4CCC19A1-4227-4DE8-919F-4E0E1A8EB701")
         };
-
         List<Question> actual = randomQuestionService.poseQuestions(questions,blacklist);
-        System.out.println(actual);
-        assertEquals(QUESTIONS_PER_TYPE, actual.size());
 
+        assertEquals(QUESTIONS_PER_TYPE, actual.size());
     }
 
     @Test

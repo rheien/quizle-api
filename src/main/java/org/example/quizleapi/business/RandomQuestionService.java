@@ -7,7 +7,6 @@ import org.example.quizleapi.questions.TextInput;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -60,6 +59,7 @@ public class RandomQuestionService implements QuestionService {
         for (int i = 0; i < QUESTIONS_PER_TYPE; i++) {
             int index = Util.getRandomNumber(questions.size());
 
+            //TODO: in the test there is a continuous loop with shouldBeExcluded
             while (hasBeenPicked(assembleQuestions, questions.get(index).id) ||
                     shouldBeExcluded(excludedIDs, questions.get(index).id)) {
                 index = Util.getRandomNumber(questions.size());
@@ -75,8 +75,6 @@ public class RandomQuestionService implements QuestionService {
             if(question.id.equals(id)) return true;
         }
         return false;
-
-        //return pickedQuestions.equals(id);
     }
 
     public boolean shouldBeExcluded(UUID[] excludedIDs, UUID id) {

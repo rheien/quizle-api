@@ -36,9 +36,9 @@ public class QuestionController extends AbstractHandler {
 
         List<Question> questions = questionService.assembleQuestions(6,new UUID[]{});
         List<UUID> blacklists = new ArrayList<UUID>();
-        for (Question value : questions) {
-            response.getWriter().println(value.id);
-            blacklists.add(value.id);
+        for (Question question : questions) {
+            response.getWriter().println(question.id);
+            blacklists.add(question.id);
         }
 
         response.getWriter().println();
