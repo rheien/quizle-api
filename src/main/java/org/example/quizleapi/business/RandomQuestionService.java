@@ -60,10 +60,8 @@ public class RandomQuestionService implements QuestionService {
         for (int i = 0; i < QUESTIONS_PER_TYPE; i++) {
             int index = Util.getRandomNumber(questions.size());
 
-
-
-            while (hasBeenPicked(assembleQuestions, questions.get(index)) ||
-                    shouldBeExcluded(excludedIDs, questions.get(index))) {
+            while (hasBeenPicked(assembleQuestions, questions.get(index).id) ||
+                    shouldBeExcluded(excludedIDs, questions.get(index).id)) {
                 index = Util.getRandomNumber(questions.size());
             }
             Question question = questions.get(index);
@@ -72,13 +70,20 @@ public class RandomQuestionService implements QuestionService {
         return assembleQuestions;
     }
 
-    public boolean hasBeenPicked(List<Question> pickedQuestions, Question newPickQuestion) {
-        return pickedQuestions.equals(newPickQuestion.id);
+    public boolean hasBeenPicked(List<Question> pickedQuestions, UUID id) {
+        for (Question question : pickedQuestions) {
+            if(question.id.equals(id)) return true;
+        }
+        return false;
+
+        //return pickedQuestions.equals(id);
     }
 
-    public boolean shouldBeExcluded(UUID[] excludedIDs, Question question) {
-        List<UUID> exQuestions = Arrays.asList(excludedIDs);
-        return exQuestions.equals(question.id);
+    public boolean shouldBeExcluded(UUID[] excludedIDs, UUID id) {
+        for (UUID excludedID : excludedIDs) {
+            if(excludedID.equals(id)) return true;
+        }
+        return false;
     }
 
     public boolean enoughQuestionsLeft(List<Question> questions, UUID[] excludedIDs) {

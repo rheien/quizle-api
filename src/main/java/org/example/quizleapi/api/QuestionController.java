@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,8 +35,17 @@ public class QuestionController extends AbstractHandler {
         response.getWriter().println("Current time: " + LocalDateTime.now());
 
         List<Question> questions = questionService.assembleQuestions(6,new UUID[]{});
-        for (int i = 0; i < questions.size(); i++) {
-            response.getWriter().println(questions.get(i).id);
+        List<UUID> blacklists = new ArrayList<UUID>();
+        for (Question value : questions) {
+            response.getWriter().println(value.id);
+            blacklists.add(value.id);
+        }
+
+        response.getWriter().println();
+        UUID[] excludedIDs= blacklists.toArray(new UUID[blacklists.size()]);
+        List<Question> questions2 = questionService.assembleQuestions(6,excludedIDs);
+        for (Question question : questions2) {
+            response.getWriter().println(question.id);
         }
 
         response.getWriter().println();

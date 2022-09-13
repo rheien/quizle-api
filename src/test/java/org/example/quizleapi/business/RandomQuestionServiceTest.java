@@ -1,9 +1,6 @@
 package org.example.quizleapi.business;
 
-import org.example.quizleapi.questions.MultipleChoice;
-import org.example.quizleapi.questions.Question;
-import org.example.quizleapi.questions.SingleChoice;
-import org.example.quizleapi.questions.TextInput;
+import org.example.quizleapi.questions.*;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -44,16 +41,6 @@ class RandomQuestionServiceTest {
         };
         List<Question> actual = randomQuestionService.assembleQuestions(QUESTIONS_PER_SET, blacklist);
 
-        /*
-        List<String> actualQuestions = new ArrayList<String>();
-        for (Question question : actual) {
-            actualQuestions.add(question.question);
-        }
-
-        //TODO: does this really check the elements of the lists?
-        assertFalse(actualQuestions.containsAll(Arrays.asList(blacklist)));
-
-         */
         assertFalse(actual.equals(blacklist));
     }
 
@@ -117,6 +104,72 @@ class RandomQuestionServiceTest {
         List<Question> actual = randomQuestionService.assembleQuestions(QUESTIONS_PER_SET, nullIDs);
 
         assertTrue(actual.isEmpty());
+    }
+
+    @Test
+    public void shouldBeExcluded_should_return_true_byEqualID(){
+        RandomQuestionService randomQuestionService = new RandomQuestionService();
+
+        UUID[] blacklist = new UUID[]{
+                UUID.fromString("DAF33C83-C546-47BA-9112-87DE0FD4A7BC"),
+                UUID.fromString("AB47EBD7-8F8D-4567-8FBC-3546C3BFCBD9")
+        };
+
+        UUID pickedSameID = UUID.fromString("DAF33C83-C546-47BA-9112-87DE0FD4A7BC");
+
+        boolean actual = randomQuestionService.shouldBeExcluded(blacklist, pickedSameID);
+
+        assertTrue(actual);
+    }
+
+    @Test
+    public void hasBeenPicked_should_return_true_byAlreadyPicked(){
+        RandomQuestionService randomQuestionService = new RandomQuestionService();
+
+        List<Question> pickedQuestions = Arrays.asList(
+                new Question(
+                        UUID.fromString("2FBA748A-C49A-40C0-B8FF-E0F8D32BD83D"),
+                        "Wie lautet der Vorname von Frau Springer?",
+                        new String[]{"Friede"},
+                        new String[]{"Friede"},
+                        QuestionType.FREE_TEXT
+                ),
+
+                new Question(
+                        UUID.fromString("4CCC19A1-4227-4DE8-919F-4E0E1A8EB701"),
+                        "Wie heißt die nicht frittierte Variante von der Frühlingsrolle?",
+                        new String[]{"Sommerrolle"},
+                        new String[]{"Sommerrolle"},
+                        QuestionType.FREE_TEXT
+                )
+        );
+
+        UUID pickedSameID = UUID.fromString("4CCC19A1-4227-4DE8-919F-4E0E1A8EB701");
+
+        boolean actual = randomQuestionService.hasBeenPicked(pickedQuestions, pickedSameID);
+
+        assertTrue(actual);
+    }
+
+    @Test
+    public void poseQuestions_should_return_questionList_withoutBlacklist(){
+        RandomQuestionService randomQuestionService = new RandomQuestionService();
+
+        List<Question> questions = TextInput.FREE_TEXT_QUESTIONS;
+
+        UUID[] blacklist = new UUID[]{
+                UUID.fromString("DAF33C83-C546-47BA-9112-87DE0FD4A7BC"),
+                UUID.fromString("AB47EBD7-8F8D-4567-8FBC-3546C3BFCBD9"),
+                UUID.fromString("2D7CDAD4-A3D0-41A9-BCE7-DF6F74D92777"),
+                UUID.fromString("091052D0-F0A8-48BC-A3FE-39259D313844"),
+                UUID.fromString("2FBA748A-C49A-40C0-B8FF-E0F8D32BD83D"),
+                UUID.fromString("4CCC19A1-4227-4DE8-919F-4E0E1A8EB701")
+        };
+
+        List<Question> actual = randomQuestionService.poseQuestions(questions,blacklist);
+        System.out.println(actual);
+        assertEquals(QUESTIONS_PER_TYPE, actual.size());
+
     }
 
     @Test
