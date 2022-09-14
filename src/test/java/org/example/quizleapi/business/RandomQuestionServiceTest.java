@@ -18,11 +18,10 @@ class RandomQuestionServiceTest {
     public void assembleQuestions_should_return_aQuestionList() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
-        int numberOfQuestions = QUESTIONS_PER_SET;
         UUID[] emptyIDs = new UUID[]{};
-        List<Question> actual = randomQuestionService.assembleQuestions(numberOfQuestions, emptyIDs);
+        List<Question> actual = randomQuestionService.assembleQuestions(QUESTIONS_PER_SET, emptyIDs);
 
-        assertEquals(numberOfQuestions, actual.size());
+        assertEquals(QUESTIONS_PER_SET, actual.size());
     }
 
     @Test
@@ -45,7 +44,7 @@ class RandomQuestionServiceTest {
         }
         UUID[] actual = ids.toArray(new UUID[ids.size()]);
 
-        assertFalse(Arrays.equals(actual, blacklist));
+        assertFalse(Arrays.deepEquals(actual, blacklist));
     }
 
     @Test
@@ -69,19 +68,6 @@ class RandomQuestionServiceTest {
         Set<Question> uniqueQuestions = new HashSet<Question>(actual);
 
         assertEquals(actual.size(), uniqueQuestions.size());
-    }
-
-    //TODO: add test case for single choice or free text input?
-    @Test
-    public void poseQuestions_should_return_questionList_fromOneType() {
-        RandomQuestionService randomQuestionService = new RandomQuestionService();
-
-        UUID[] emptyIDs = new UUID[]{};
-
-        List<Question> mChoiceQuestions = MultipleChoice.MULTIPLE_CHOICE_QUESTIONS;
-        List<Question> actual = randomQuestionService.poseQuestions(mChoiceQuestions, emptyIDs);
-
-        assertEquals(QUESTIONS_PER_TYPE, actual.size());
     }
 
     //TODO: change or add test case for minimum available questions?
@@ -111,7 +97,41 @@ class RandomQuestionServiceTest {
     }
 
     @Test
-    public void shouldBeExcluded_should_return_true_byEqualID(){
+    public void enoughQuestionsLeft_should_return_true_forEnoughQuestionsLeft() {
+        RandomQuestionService randomQuestionService = new RandomQuestionService();
+
+        List<Question> questions = TextInput.FREE_TEXT_QUESTIONS;
+        List<UUID> IDs = new ArrayList<UUID>();
+        for (Question question : questions) {
+            IDs.add(question.id);
+        }
+        UUID[] blacklist = IDs.subList(0, IDs.size() - QUESTIONS_PER_TYPE)
+                .toArray(new UUID[]{});
+
+        boolean actual = randomQuestionService.enoughQuestionsLeft(questions, blacklist);
+
+        assertTrue(actual);
+    }
+
+    @Test
+    public void enoughQuestionsLeft_should_return_false_whenNotEnoughQuestionsLeft() {
+        RandomQuestionService randomQuestionService = new RandomQuestionService();
+
+        List<Question> questions = TextInput.FREE_TEXT_QUESTIONS;
+        List<UUID> IDs = new ArrayList<UUID>();
+        for (Question question : questions) {
+            IDs.add(question.id);
+        }
+        UUID[] blacklist = IDs.subList(0, IDs.size() - (QUESTIONS_PER_TYPE - 1))
+                .toArray(new UUID[]{});
+
+        boolean actual = randomQuestionService.enoughQuestionsLeft(questions, blacklist);
+
+        assertFalse(actual);
+    }
+
+    @Test
+    public void shouldBeExcluded_should_return_true_byEqualID() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
         UUID[] blacklist = new UUID[]{
@@ -127,7 +147,23 @@ class RandomQuestionServiceTest {
     }
 
     @Test
-    public void hasBeenPicked_should_return_true_byAlreadyPicked(){
+    public void shouldBeExcluded_should_return_false_byInvalidID() {
+        RandomQuestionService randomQuestionService = new RandomQuestionService();
+
+        UUID[] blacklist = new UUID[]{
+                UUID.fromString("DAF33C83-C546-47BA-9112-87DE0FD4A7BC"),
+                UUID.fromString("AB47EBD7-8F8D-4567-8FBC-3546C3BFCBD9")
+        };
+
+        UUID invalidID = UUID.randomUUID();
+
+        boolean actual = randomQuestionService.shouldBeExcluded(blacklist, invalidID);
+
+        assertFalse(actual);
+    }
+
+    @Test
+    public void hasBeenPicked_should_return_true_byAlreadyPicked() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
         List<Question> pickedQuestions = Arrays.asList(
@@ -155,22 +191,55 @@ class RandomQuestionServiceTest {
     }
 
     @Test
-    public void poseQuestions_should_return_questionList_withoutBlacklist(){
+    public void poseQuestions_should_return_questionList_withoutBlacklist() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
         List<Question> questions = TextInput.FREE_TEXT_QUESTIONS;
+        List<UUID> IDs = new ArrayList<UUID>();
+        for (Question question : questions) {
+            IDs.add(question.id);
+        }
+        UUID[] blacklist = IDs.subList(0, IDs.size() - 2)
+                .toArray(new UUID[]{});
 
-        UUID[] blacklist = new UUID[]{
-                UUID.fromString("DAF33C83-C546-47BA-9112-87DE0FD4A7BC"),
-                UUID.fromString("AB47EBD7-8F8D-4567-8FBC-3546C3BFCBD9"),
-                UUID.fromString("2D7CDAD4-A3D0-41A9-BCE7-DF6F74D92777"),
-                UUID.fromString("091052D0-F0A8-48BC-A3FE-39259D313844"),
-                UUID.fromString("2FBA748A-C49A-40C0-B8FF-E0F8D32BD83D"),
-                UUID.fromString("4CCC19A1-4227-4DE8-919F-4E0E1A8EB701")
-        };
-        List<Question> actual = randomQuestionService.poseQuestions(questions,blacklist);
+        List<Question> actual = randomQuestionService.poseQuestions(questions, blacklist);
+        Set<Question> uniqueQuestions = new HashSet<Question>(actual);
+
+        assertEquals(uniqueQuestions.size(), actual.size());
+    }
+
+    //TODO: add test case for single choice or free text input?
+    @Test
+    public void poseQuestions_emptyBlacklist_should_return_questionList() {
+        RandomQuestionService randomQuestionService = new RandomQuestionService();
+
+        UUID[] emptyIDs = new UUID[]{};
+
+        List<Question> mChoiceQuestions = MultipleChoice.MULTIPLE_CHOICE_QUESTIONS;
+        List<Question> actual = randomQuestionService.poseQuestions(mChoiceQuestions, emptyIDs);
 
         assertEquals(QUESTIONS_PER_TYPE, actual.size());
+    }
+
+
+    @Test
+    public void poseQuestions_withBlacklist_should_return_questionList_withoutBlacklist() {
+        RandomQuestionService randomQuestionService = new RandomQuestionService();
+
+        UUID[] excludedIDs = new UUID[]{
+                UUID.fromString("DAF33C83-C546-47BA-9112-87DE0FD4A7BC"),
+                UUID.fromString("AB47EBD7-8F8D-4567-8FBC-3546C3BFCBD9")
+        };
+
+        List<Question> mChoiceQuestions = MultipleChoice.MULTIPLE_CHOICE_QUESTIONS;
+        List<Question> actual = randomQuestionService.poseQuestions(mChoiceQuestions, excludedIDs);
+
+        UUID[] actualIDs = new UUID[actual.size()];
+        actual.forEach(question -> {
+            actualIDs[actual.indexOf(question)] = question.id;
+        });
+
+        assertFalse(Arrays.deepEquals(excludedIDs, actualIDs));
     }
 
     @Test
