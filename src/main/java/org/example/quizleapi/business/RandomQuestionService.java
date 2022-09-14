@@ -14,8 +14,9 @@ import static org.example.quizleapi.questions.TextInput.FREE_TEXT_QUESTIONS;
 
 public class RandomQuestionService implements QuestionService {
 
-    //TODO: how to change so that at least one of each type is been picked?
-    static final int QUESTIONS_PER_TYPE = 1;//2;
+    static final int QUESTIONS_PER_TYPE = 1;
+
+    static final int QUESTIONSET_PER_DEFAULT = 6;
 
     public List<Question> assembleQuestions(int numberOfQuestions, UUID[] excludedIDs) throws IOException {
         validNumber(numberOfQuestions);
@@ -30,16 +31,16 @@ public class RandomQuestionService implements QuestionService {
         return getQuestionList(questions, numberOfQuestions, excludedIDs);
     }
 
+    //TODO: how to change so that at least one of each type is been picked?
     public List<Question> getQuestionList(List<List<Question>> questions, int numberOfQuestions, UUID[] excludedIDs) {
 
         List<Question> assembledQuestions = new ArrayList<>();
-        while (numberOfQuestions > 0) {
-            int randomNumber = Util.getRandomNumber(questions.size());
+        while (numberOfQuestions > assembledQuestions.size()) {
+            int randomNumber = Util.getRandomNumber(0, questions.size());
             if (!enoughQuestionsLeft(questions.get(randomNumber), excludedIDs)) {
                 return new ArrayList<Question>();
             }
             assembledQuestions.addAll(poseQuestions(assembledQuestions, questions.get(randomNumber), excludedIDs));
-            numberOfQuestions--;
         }
         return assembledQuestions;
     }
@@ -54,14 +55,21 @@ public class RandomQuestionService implements QuestionService {
         }
     }
 
+    /**
+     * This method pick one valid question for the quiz
+     * @param assembleQuestions a list of assembled questions for the quiz
+     * @param questions a list of questions from one type of answers
+     * @param excludedIDs a list which must not be used again
+     * @return one question in a list of questions
+     */
     public List<Question> poseQuestions(List<Question> assembleQuestions, List<Question> questions, UUID[] excludedIDs) {
         List<Question> pickQuestions = new ArrayList<Question>();
 
-        int index = Util.getRandomNumber(questions.size());
+        int index = Util.getRandomNumber(0, questions.size());
 
         while (hasBeenPicked(assembleQuestions, questions.get(index).id) ||
                 shouldBeExcluded(excludedIDs, questions.get(index).id)) {
-            index = Util.getRandomNumber(questions.size());
+            index = Util.getRandomNumber(0, questions.size());
         }
         Question question = questions.get(index);
         pickQuestions.add(question);
@@ -69,6 +77,12 @@ public class RandomQuestionService implements QuestionService {
         return pickQuestions;
     }
 
+    /**
+     * This method checks for duplicate questions
+     * @param pickedQuestions a list for the quiz
+     * @param id given UUID to check
+     * @return boolean
+     */
     public boolean hasBeenPicked(List<Question> pickedQuestions, UUID id) {
         boolean isPicked = false;
         for (Question question : pickedQuestions) {
@@ -80,6 +94,12 @@ public class RandomQuestionService implements QuestionService {
         return isPicked;
     }
 
+    /**
+     * This method checks if the questions are in the given list
+     * @param excludedIDs a list which must not be used again
+     * @param id given UUID to check
+     * @return boolean
+     */
     public boolean shouldBeExcluded(UUID[] excludedIDs, UUID id) {
         for (UUID excludedID : excludedIDs) {
             boolean isExcluded = excludedID.equals(id);
