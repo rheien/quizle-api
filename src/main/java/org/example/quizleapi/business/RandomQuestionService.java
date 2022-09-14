@@ -15,34 +15,32 @@ import static org.example.quizleapi.questions.TextInput.FREE_TEXT_QUESTIONS;
 public class RandomQuestionService implements QuestionService {
 
     //TODO: how to change so that at least one of each type is been picked?
-    static final int QUESTIONS_PER_TYPE = 2;
+    static final int QUESTIONS_PER_TYPE = 1;//2;
 
-    public List<Question> assembleQuestions(int numberOfQuestions, UUID[] excludedIDs) {
-        List<Question> assembledQuestions = new ArrayList<>();
+    public List<Question> assembleQuestions(int numberOfQuestions, UUID[] excludedIDs) throws IOException {
+        validNumber(numberOfQuestions);
 
-        if (excludedIDs == null) return assembledQuestions;
+        if (excludedIDs == null) return new ArrayList<>();
 
         List<List<Question>> questions = new ArrayList<List<Question>>();
         questions.add(TextInput.FREE_TEXT_QUESTIONS);
         questions.add(SingleChoice.SINGLE_CHOICE_QUESTIONS);
         questions.add(MultipleChoice.MULTIPLE_CHOICE_QUESTIONS);
 
-        //TODO: refactor to seperate class
-        if (!enoughQuestionsLeft(questions.get(2), excludedIDs)) {
-            return new ArrayList<Question>();
-        }
-        assembledQuestions.addAll(poseQuestions(questions.get(2), excludedIDs));
+        return getQuestionList(questions, numberOfQuestions, excludedIDs);
+    }
 
-        if (!enoughQuestionsLeft(questions.get(1), excludedIDs)) {
-            return new ArrayList<Question>();
-        }
-        assembledQuestions.addAll(poseQuestions(questions.get(1), excludedIDs));
+    public List<Question> getQuestionList(List<List<Question>> questions, int numberOfQuestions, UUID[] excludedIDs) {
 
-        if (!enoughQuestionsLeft(questions.get(0), excludedIDs)) {
-            return new ArrayList<Question>();
+        List<Question> assembledQuestions = new ArrayList<>();
+        while (numberOfQuestions > 0) {
+            int randomNumber = Util.getRandomNumber(questions.size());
+            if (!enoughQuestionsLeft(questions.get(randomNumber), excludedIDs)) {
+                return new ArrayList<Question>();
+            }
+            assembledQuestions.addAll(poseQuestions(assembledQuestions, questions.get(randomNumber), excludedIDs));
+            numberOfQuestions--;
         }
-        assembledQuestions.addAll(poseQuestions(questions.get(0), excludedIDs));
-
         return assembledQuestions;
     }
 
@@ -56,20 +54,19 @@ public class RandomQuestionService implements QuestionService {
         }
     }
 
-    public List<Question> poseQuestions(List<Question> questions, UUID[] excludedIDs) {
-        List<Question> assembleQuestions = new ArrayList<Question>();
+    public List<Question> poseQuestions(List<Question> assembleQuestions, List<Question> questions, UUID[] excludedIDs) {
+        List<Question> pickQuestions = new ArrayList<Question>();
 
-        for (int i = 0; i < QUESTIONS_PER_TYPE; i++) {
-            int index = Util.getRandomNumber(questions.size());
+        int index = Util.getRandomNumber(questions.size());
 
-            while (hasBeenPicked(assembleQuestions, questions.get(index).id) ||
-                    shouldBeExcluded(excludedIDs, questions.get(index).id)) {
-                index = Util.getRandomNumber(questions.size());
-            }
-            Question question = questions.get(index);
-            assembleQuestions.add(question);
+        while (hasBeenPicked(assembleQuestions, questions.get(index).id) ||
+                shouldBeExcluded(excludedIDs, questions.get(index).id)) {
+            index = Util.getRandomNumber(questions.size());
         }
-        return assembleQuestions;
+        Question question = questions.get(index);
+        pickQuestions.add(question);
+
+        return pickQuestions;
     }
 
     public boolean hasBeenPicked(List<Question> pickedQuestions, UUID id) {
@@ -105,6 +102,6 @@ public class RandomQuestionService implements QuestionService {
                 }
             }
         }
-        return questions.size() - checkedQuestions.size() >= QUESTIONS_PER_TYPE;
+        return questions.size() > checkedQuestions.size();
     }
 }

@@ -15,7 +15,7 @@ class RandomQuestionServiceTest {
     static final int QUESTIONS_PER_SET = 6;
 
     @Test
-    public void assembleQuestions_should_return_aQuestionList() {
+    public void assembleQuestions_should_return_aQuestionList() throws IOException {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
         UUID[] emptyIDs = new UUID[]{};
@@ -25,7 +25,7 @@ class RandomQuestionServiceTest {
     }
 
     @Test
-    public void assembleQuestions_should_return_aQuestionList_withoutExcludedQuestions() {
+    public void assembleQuestions_should_return_aQuestionList_withoutExcludedQuestions() throws IOException {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
         UUID[] blacklist = new UUID[]{
@@ -48,7 +48,7 @@ class RandomQuestionServiceTest {
     }
 
     @Test
-    public void assembleQuestions_should_return_twoRandomQuestionLists() {
+    public void assembleQuestions_should_return_twoRandomQuestionLists() throws IOException {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
         int numberOfQuestions = QUESTIONS_PER_SET;
@@ -60,7 +60,7 @@ class RandomQuestionServiceTest {
     }
 
     @Test
-    public void assembleQuestions_should_return_noDuplicateQuestions() {
+    public void assembleQuestions_should_return_noDuplicateQuestions() throws IOException {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
         UUID[] emptyIDs = new UUID[]{};
@@ -72,7 +72,7 @@ class RandomQuestionServiceTest {
 
     //TODO: change or add test case for minimum available questions?
     @Test
-    public void assembleQuestions_should_return_emptyList_noQuestionAvailable() {
+    public void assembleQuestions_should_return_emptyList_noQuestionAvailable() throws IOException {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
         List<Question> mChoiceQuestions = MultipleChoice.MULTIPLE_CHOICE_QUESTIONS;
@@ -87,7 +87,7 @@ class RandomQuestionServiceTest {
     }
 
     @Test
-    public void assembleQuestions_should_return_emptyList_byNull() {
+    public void assembleQuestions_should_return_emptyList_byNull() throws IOException {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
         UUID[] nullIDs = null;
@@ -202,7 +202,9 @@ class RandomQuestionServiceTest {
         UUID[] blacklist = IDs.subList(0, IDs.size() - 2)
                 .toArray(new UUID[]{});
 
-        List<Question> actual = randomQuestionService.poseQuestions(questions, blacklist);
+        List<Question> assembleQuestions = new ArrayList<Question>();
+
+        List<Question> actual = randomQuestionService.poseQuestions(assembleQuestions, questions, blacklist);
         Set<Question> uniqueQuestions = new HashSet<Question>(actual);
 
         assertEquals(uniqueQuestions.size(), actual.size());
@@ -216,7 +218,8 @@ class RandomQuestionServiceTest {
         UUID[] emptyIDs = new UUID[]{};
 
         List<Question> mChoiceQuestions = MultipleChoice.MULTIPLE_CHOICE_QUESTIONS;
-        List<Question> actual = randomQuestionService.poseQuestions(mChoiceQuestions, emptyIDs);
+        List<Question> assembleQuestions = new ArrayList<Question>();
+        List<Question> actual = randomQuestionService.poseQuestions(assembleQuestions,mChoiceQuestions, emptyIDs);
 
         assertEquals(QUESTIONS_PER_TYPE, actual.size());
     }
@@ -231,8 +234,9 @@ class RandomQuestionServiceTest {
                 UUID.fromString("AB47EBD7-8F8D-4567-8FBC-3546C3BFCBD9")
         };
 
+        List<Question> assembleQuestions = new ArrayList<Question>();
         List<Question> mChoiceQuestions = MultipleChoice.MULTIPLE_CHOICE_QUESTIONS;
-        List<Question> actual = randomQuestionService.poseQuestions(mChoiceQuestions, excludedIDs);
+        List<Question> actual = randomQuestionService.poseQuestions(assembleQuestions,mChoiceQuestions, excludedIDs);
 
         UUID[] actualIDs = new UUID[actual.size()];
         actual.forEach(question -> {
@@ -243,7 +247,7 @@ class RandomQuestionServiceTest {
     }
 
     @Test
-    public void validNumber_should_throw_negativeNumber() throws IOException {
+    public void validNumber_should_throw_negativeNumber() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
         int negativeNumber = -(Util.getRandomNumber(10000));
@@ -252,7 +256,7 @@ class RandomQuestionServiceTest {
     }
 
     @Test
-    public void validNumber_should_throw_byHighNumber() throws IOException {
+    public void validNumber_should_throw_byHighNumber() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
         int highNumber = Util.getRandomNumber(10000);
