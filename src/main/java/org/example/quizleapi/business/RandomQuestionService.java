@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.example.quizleapi.questions.TextInput.FREE_TEXT_QUESTIONS;
-
 public class RandomQuestionService implements QuestionService {
 
     public List<Question> assembleQuestions(int numberOfQuestions, List<UUID> excludedIDs) throws IOException {
@@ -67,9 +65,10 @@ public class RandomQuestionService implements QuestionService {
      *                     more questions available.
      */
     public void validNumber(int numberOfQuestions, List<List<Question>> questions) throws IOException {
-        int totalNumberOfQuestions = (FREE_TEXT_QUESTIONS.size() +
-                SingleChoice.SINGLE_CHOICE_QUESTIONS.size() +
-                MultipleChoice.MULTIPLE_CHOICE_QUESTIONS.size());
+        int totalNumberOfQuestions = 0;
+        for (List<Question> question : questions) {
+             totalNumberOfQuestions += question.size();
+        }
 
         int typesOfAnswers = questions.size();
 
