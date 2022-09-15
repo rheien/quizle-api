@@ -14,25 +14,19 @@ import static org.example.quizleapi.questions.TextInput.FREE_TEXT_QUESTIONS;
 
 public class RandomQuestionService implements QuestionService {
 
-    static final int QUESTIONS_PER_ANSWERTYPE = 1;
-
-    static final int QUESTIONSET_PER_DEFAULT = 6;
-
     public List<Question> assembleQuestions(int numberOfQuestions, List<UUID> excludedIDs) throws IOException {
-        validNumber(numberOfQuestions);
-
-        if (excludedIDs == null) return new ArrayList<>();
-
         List<List<Question>> questions = new ArrayList<List<Question>>();
         questions.add(TextInput.FREE_TEXT_QUESTIONS);
         questions.add(SingleChoice.SINGLE_CHOICE_QUESTIONS);
         questions.add(MultipleChoice.MULTIPLE_CHOICE_QUESTIONS);
 
+        validNumber(numberOfQuestions, questions);
+
+        if (excludedIDs == null) return new ArrayList<>();
+
         return getQuestionList(questions, numberOfQuestions, excludedIDs);
     }
 
-
-    //TODO: handle if one type of answers are empty but the others are not
     /**
      * This method assemble random questions from random type of answers.
      *
@@ -72,14 +66,19 @@ public class RandomQuestionService implements QuestionService {
      *                     is it greater than the collection it should throw a message that there are no
      *                     more questions available.
      */
-    public void validNumber(int numberOfQuestions) throws IOException {
-        if (numberOfQuestions < 0) {
-            throw new IOException("Invalid number");
-        } else if (numberOfQuestions > (FREE_TEXT_QUESTIONS.size() +
+    public void validNumber(int numberOfQuestions, List<List<Question>> questions) throws IOException {
+        int totalNumberOfQuestions = (FREE_TEXT_QUESTIONS.size() +
                 SingleChoice.SINGLE_CHOICE_QUESTIONS.size() +
-                MultipleChoice.MULTIPLE_CHOICE_QUESTIONS.size())) {
+                MultipleChoice.MULTIPLE_CHOICE_QUESTIONS.size());
+
+        int typesOfAnswers = questions.size();
+
+        if (numberOfQuestions > totalNumberOfQuestions) {
             throw new IOException("So many questions aren't available");
+        } else if (numberOfQuestions < typesOfAnswers){
+            throw new IOException("Invalid Input. The number must be at least this high: "+typesOfAnswers+".");
         }
+
     }
 
     /**
@@ -148,7 +147,7 @@ public class RandomQuestionService implements QuestionService {
      * @return true if at least one question is available
      */
     public boolean enoughQuestionsLeft(List<Question> questions, List<UUID> excludedIDs) {
-        if (excludedIDs.size() == 0) return true;
+        if (excludedIDs.isEmpty()) return true;
 
         List<Question> checkedQuestions = new ArrayList<Question>();
         for (Question question : questions) {
@@ -163,7 +162,6 @@ public class RandomQuestionService implements QuestionService {
     }
 
     public static int randomNumber(int min, int max) {
-
         return (int) ((Math.random() * (max - min)) + min);
     }
 }

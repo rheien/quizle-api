@@ -32,9 +32,12 @@ public class QuestionController extends AbstractHandler {
         response.getWriter().println("n: " + request.getParameter("n"));
         response.getWriter().println("x: " + request.getParameterValues("x"));
 
-   // UUID.fromString(request.getParameter)
+        //int numberOfQuestions = validNumber(request.getParameter("n"));
+        //validID();
 
-        List<Question> questions = questionService.assembleQuestions(9,new ArrayList<UUID>());
+        response.getWriter().println();
+
+        List<Question> questions = questionService.assembleQuestions(9, new ArrayList<UUID>());
         List<UUID> blacklists = new ArrayList<UUID>();
         for (Question question : questions) {
             response.getWriter().println(question.id);
@@ -42,13 +45,33 @@ public class QuestionController extends AbstractHandler {
         }
 
         response.getWriter().println();
-        List<Question> questions2 = questionService.assembleQuestions(6, blacklists);
-        for (Question question : questions2) {
-            response.getWriter().println(question.id);
-        }
-
-        response.getWriter().println();
 
         baseRequest.setHandled(true);
+    }
+
+
+    public int validNumber(String numberOfQuestions) throws IOException {
+        if (!isNumeric(numberOfQuestions)) {
+            throw new IOException("Invalid number");
+        }
+        if (numberOfQuestions.length() == 0) {
+            return QuestionService.QUESTIONSET_PER_DEFAULT;
+        }
+        return Integer.parseInt(numberOfQuestions);
+    }
+
+    //this method returns true if string is not null. smaller than zero and only an integer
+    public boolean isNumeric(String str) {
+        return str != null && str.matches("^[1-9][0-9]*$");
+    }
+
+    public void validID(String[] excludedIDs) {
+        for (String id : excludedIDs) {
+            try {
+                UUID uuid = UUID.fromString(id);
+            } catch (IllegalArgumentException exception) {
+
+            }
+        }
     }
 }
