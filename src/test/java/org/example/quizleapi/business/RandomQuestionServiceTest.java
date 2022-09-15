@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.*;
 
+import static java.util.Objects.deepEquals;
 import static org.example.quizleapi.business.RandomQuestionService.QUESTIONSET_PER_DEFAULT;
+import static org.example.quizleapi.business.RandomQuestionService.randomNumber;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RandomQuestionServiceTest {
@@ -15,43 +17,46 @@ class RandomQuestionServiceTest {
     public void assembleQuestions_should_return_aQuestionList() throws IOException {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
-        UUID[] emptyIDs = new UUID[]{};
-        List<Question> actual = randomQuestionService.assembleQuestions(QUESTIONSET_PER_DEFAULT, emptyIDs);
+        List<UUID> emptyIDs = new ArrayList<UUID>();
+        int randomNumber = randomNumber(QUESTIONSET_PER_DEFAULT,18);
 
-        assertEquals(QUESTIONSET_PER_DEFAULT, actual.size());
+        List<Question> actual = randomQuestionService.assembleQuestions(randomNumber, emptyIDs);
+
+        assertEquals(randomNumber, actual.size());
     }
 
     @Test
     public void assembleQuestions_should_return_aQuestionList_withoutExcludedQuestions() throws IOException {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
-        UUID[] blacklist = new UUID[]{
+        List<UUID> blacklist = Arrays.asList(
                 UUID.fromString("DAF33C83-C546-47BA-9112-87DE0FD4A7BC"),
                 UUID.fromString("AB47EBD7-8F8D-4567-8FBC-3546C3BFCBD9"),
                 UUID.fromString("2D7CDAD4-A3D0-41A9-BCE7-DF6F74D92777"),
                 UUID.fromString("091052D0-F0A8-48BC-A3FE-39259D313844"),
                 UUID.fromString("2FBA748A-C49A-40C0-B8FF-E0F8D32BD83D"),
                 UUID.fromString("4CCC19A1-4227-4DE8-919F-4E0E1A8EB701")
-        };
+        );
+        int randomNumber = randomNumber(QUESTIONSET_PER_DEFAULT,18);
 
-        List<Question> questions = randomQuestionService.assembleQuestions(QUESTIONSET_PER_DEFAULT, blacklist);
-        List<UUID> ids = new ArrayList<>();
+        List<Question> questions = randomQuestionService.assembleQuestions(randomNumber, blacklist);
+        List<UUID> actual = new ArrayList<>();
         for (Question question : questions) {
-            ids.add(question.id);
+            actual.add(question.id);
         }
-        UUID[] actual = ids.toArray(new UUID[ids.size()]);
 
-        assertFalse(Arrays.deepEquals(actual, blacklist));
+        assertFalse(deepEquals(actual, blacklist));
     }
 
     @Test
     public void assembleQuestions_should_return_twoRandomQuestionLists() throws IOException {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
-        int numberOfQuestions = QUESTIONSET_PER_DEFAULT;
-        UUID[] emptyIDs = new UUID[]{};
-        List<Question> questionList1 = randomQuestionService.assembleQuestions(numberOfQuestions, emptyIDs);
-        List<Question> questionList2 = randomQuestionService.assembleQuestions(numberOfQuestions, emptyIDs);
+        List<UUID> emptyIDs = new ArrayList<UUID>();
+        int randomNumber = randomNumber(QUESTIONSET_PER_DEFAULT,18);
+
+        List<Question> questionList1 = randomQuestionService.assembleQuestions(randomNumber, emptyIDs);
+        List<Question> questionList2 = randomQuestionService.assembleQuestions(randomNumber, emptyIDs);
 
         assertNotEquals(questionList1, questionList2);
     }
@@ -60,25 +65,28 @@ class RandomQuestionServiceTest {
     public void assembleQuestions_should_return_noDuplicateQuestions() throws IOException {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
-        UUID[] emptyIDs = new UUID[]{};
-        List<Question> actual = randomQuestionService.assembleQuestions(QUESTIONSET_PER_DEFAULT, emptyIDs);
+        List<UUID> emptyIDs = new ArrayList<UUID>();
+        int randomNumber = randomNumber(QUESTIONSET_PER_DEFAULT,18);
+
+        List<Question> actual = randomQuestionService.assembleQuestions(randomNumber, emptyIDs);
         Set<Question> uniqueQuestions = new HashSet<Question>(actual);
 
         assertEquals(actual.size(), uniqueQuestions.size());
     }
 
-    //TODO: change or add test case for minimum available questions?
     @Test
     public void assembleQuestions_should_return_emptyList_noQuestionAvailable() throws IOException {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
         List<Question> mChoiceQuestions = MultipleChoice.MULTIPLE_CHOICE_QUESTIONS;
-        UUID[] entireListOfIDs = new UUID[mChoiceQuestions.size()];
+        List<UUID> entireListOfIDs = new ArrayList<UUID>();
         mChoiceQuestions.forEach((question) -> {
-            entireListOfIDs[mChoiceQuestions.indexOf(question)] = question.id;
+            entireListOfIDs.add(question.id);
         });
 
-        List<Question> actual = randomQuestionService.assembleQuestions(QUESTIONSET_PER_DEFAULT, entireListOfIDs);
+        int randomNumber = randomNumber(QUESTIONSET_PER_DEFAULT,18);
+
+        List<Question> actual = randomQuestionService.assembleQuestions(randomNumber, entireListOfIDs);
 
         assertTrue(actual.isEmpty());
     }
@@ -87,8 +95,10 @@ class RandomQuestionServiceTest {
     public void assembleQuestions_should_return_emptyList_byNull() throws IOException {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
-        UUID[] nullIDs = null;
-        List<Question> actual = randomQuestionService.assembleQuestions(QUESTIONSET_PER_DEFAULT, nullIDs);
+        List<UUID> nullIDs = null;
+        int randomNumber = randomNumber(QUESTIONSET_PER_DEFAULT,18);
+
+        List<Question> actual = randomQuestionService.assembleQuestions(randomNumber, nullIDs);
 
         assertTrue(actual.isEmpty());
     }
@@ -102,8 +112,7 @@ class RandomQuestionServiceTest {
         for (Question question : questions) {
             IDs.add(question.id);
         }
-        UUID[] blacklist = IDs.subList(0, IDs.size() - 1)
-                .toArray(new UUID[]{});
+        List<UUID> blacklist = IDs.subList(0, IDs.size() - 1);
 
         boolean actual = randomQuestionService.enoughQuestionsLeft(questions, blacklist);
 
@@ -119,8 +128,7 @@ class RandomQuestionServiceTest {
         for (Question question : questions) {
             IDs.add(question.id);
         }
-        UUID[] blacklist = IDs.subList(0, IDs.size())
-                .toArray(new UUID[]{});
+        List<UUID> blacklist = IDs.subList(0, IDs.size());
 
         boolean actual = randomQuestionService.enoughQuestionsLeft(questions, blacklist);
 
@@ -131,10 +139,10 @@ class RandomQuestionServiceTest {
     public void shouldBeExcluded_should_return_true_byEqualID() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
-        UUID[] blacklist = new UUID[]{
+        List<UUID> blacklist = Arrays.asList(
                 UUID.fromString("DAF33C83-C546-47BA-9112-87DE0FD4A7BC"),
                 UUID.fromString("AB47EBD7-8F8D-4567-8FBC-3546C3BFCBD9")
-        };
+        );
 
         UUID pickedSameID = UUID.fromString("DAF33C83-C546-47BA-9112-87DE0FD4A7BC");
 
@@ -147,10 +155,10 @@ class RandomQuestionServiceTest {
     public void shouldBeExcluded_should_return_false_byInvalidID() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
-        UUID[] blacklist = new UUID[]{
+        List<UUID> blacklist = Arrays.asList(
                 UUID.fromString("DAF33C83-C546-47BA-9112-87DE0FD4A7BC"),
                 UUID.fromString("AB47EBD7-8F8D-4567-8FBC-3546C3BFCBD9")
-        };
+        );
 
         UUID invalidID = UUID.randomUUID();
 
@@ -196,8 +204,7 @@ class RandomQuestionServiceTest {
         for (Question question : questions) {
             IDs.add(question.id);
         }
-        UUID[] blacklist = IDs.subList(0, IDs.size() - 2)
-                .toArray(new UUID[]{});
+        List<UUID> blacklist = IDs.subList(0, IDs.size() - 2);
 
         List<Question> assembleQuestions = new ArrayList<Question>();
 
@@ -211,21 +218,21 @@ class RandomQuestionServiceTest {
     public void poseQuestions_withBlacklist_should_return_questionList_withoutBlacklist() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
-        UUID[] excludedIDs = new UUID[]{
+        List<UUID> excludedIDs = Arrays.asList(
                 UUID.fromString("DAF33C83-C546-47BA-9112-87DE0FD4A7BC"),
                 UUID.fromString("AB47EBD7-8F8D-4567-8FBC-3546C3BFCBD9")
-        };
+        );
 
         List<Question> assembleQuestions = new ArrayList<Question>();
         List<Question> mChoiceQuestions = MultipleChoice.MULTIPLE_CHOICE_QUESTIONS;
         List<Question> actual = randomQuestionService.poseQuestions(assembleQuestions, mChoiceQuestions, excludedIDs);
 
-        UUID[] actualIDs = new UUID[actual.size()];
+        List<UUID> actualIDs = new ArrayList<UUID>();
         actual.forEach(question -> {
-            actualIDs[actual.indexOf(question)] = question.id;
+            actualIDs.add(question.id);
         });
 
-        assertFalse(Arrays.deepEquals(excludedIDs, actualIDs));
+        assertFalse(deepEquals(excludedIDs, actualIDs));
     }
 /*
     @Test
@@ -285,7 +292,7 @@ class RandomQuestionServiceTest {
     public void validNumber_should_throw_negativeNumber() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
-        int negativeNumber = -(Util.getRandomNumber(0, 10000));
+        int negativeNumber = -(randomNumber(0, 10000));
 
         assertThrows(IOException.class, () -> randomQuestionService.validNumber(negativeNumber));
     }
@@ -294,7 +301,7 @@ class RandomQuestionServiceTest {
     public void validNumber_should_throw_byHighNumber() {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
-        int highNumber = Util.getRandomNumber(0, 10000);
+        int highNumber = randomNumber(0, 10000);
         highNumber += TextInput.FREE_TEXT_QUESTIONS.size() +
                 SingleChoice.SINGLE_CHOICE_QUESTIONS.size() +
                 MultipleChoice.MULTIPLE_CHOICE_QUESTIONS.size();

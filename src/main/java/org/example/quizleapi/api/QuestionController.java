@@ -9,7 +9,6 @@ import org.example.quizleapi.questions.Question;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +29,12 @@ public class QuestionController extends AbstractHandler {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        response.getWriter().println("Hello " + request.getRemoteAddr() + "!");
+        response.getWriter().println("n: " + request.getParameter("n"));
+        response.getWriter().println("x: " + request.getParameterValues("x"));
 
-        response.getWriter().println("Current time: " + LocalDateTime.now());
+   // UUID.fromString(request.getParameter)
 
-        List<Question> questions = questionService.assembleQuestions(6,new UUID[]{});
+        List<Question> questions = questionService.assembleQuestions(9,new ArrayList<UUID>());
         List<UUID> blacklists = new ArrayList<UUID>();
         for (Question question : questions) {
             response.getWriter().println(question.id);
@@ -42,8 +42,7 @@ public class QuestionController extends AbstractHandler {
         }
 
         response.getWriter().println();
-        UUID[] excludedIDs= blacklists.toArray(new UUID[blacklists.size()]);
-        List<Question> questions2 = questionService.assembleQuestions(6,excludedIDs);
+        List<Question> questions2 = questionService.assembleQuestions(6, blacklists);
         for (Question question : questions2) {
             response.getWriter().println(question.id);
         }

@@ -8,5 +8,5 @@ import java.util.UUID;
 
 public interface QuestionService {
 
-    List<Question> assembleQuestions(int numberOfQuestions, UUID[] excludedQuestions) throws IOException;
+    List<Question> assembleQuestions(int numberOfQuestions, List<UUID> excludedQuestions) throws IOException;
 }
