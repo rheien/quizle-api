@@ -9,7 +9,6 @@ import java.util.*;
 import static java.util.Objects.deepEquals;
 import static org.example.quizleapi.business.RandomQuestionService.QUESTIONSET_PER_DEFAULT;
 import static org.example.quizleapi.business.RandomQuestionService.randomNumber;
-import static org.example.quizleapi.questions.TextInput.FREE_TEXT_QUESTIONS;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RandomQuestionServiceTest {
@@ -96,10 +95,9 @@ class RandomQuestionServiceTest {
     public void assembleQuestions_should_return_emptyList_byNull() throws IOException {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
-        List<UUID> nullIDs = null;
         int randomNumber = randomNumber(QUESTIONSET_PER_DEFAULT, 18);
 
-        List<Question> actual = randomQuestionService.assembleQuestions(randomNumber, nullIDs);
+        List<Question> actual = randomQuestionService.assembleQuestions(randomNumber, null);
 
         assertTrue(actual.isEmpty());
     }
