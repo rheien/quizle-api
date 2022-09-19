@@ -34,7 +34,7 @@ public class QuestionController extends AbstractHandler {
 
         String n = request.getParameter("n");
         int numberOfQuestions = QUESTIONSET_PER_DEFAULT;
-        if (n != null || n.length() == 0) {
+        if (n.length() != 0) {
             if (isValidNumberOfQuestions(n)) {
                 numberOfQuestions = Integer.parseInt(n);
             } else {
@@ -75,18 +75,22 @@ public class QuestionController extends AbstractHandler {
         }
     }
 
-    //TODO: empty spaces
     public static boolean hasValidIDs(String[] excludedIDs) {
 
         for (String id : excludedIDs) {
             try {
+                if (id == null) {
+                    return false;
+                }
+                if (id.length() == 0) {
+                    continue;
+                }
                 UUID.fromString(id);
-                return true;
             } catch (IllegalArgumentException exception) {
                 return false;
             }
         }
-        return false;
+        return true;
     }
 
 

@@ -44,4 +44,12 @@ class QuestionControllerTest {
 
         assertTrue(result);
     }
+
+    @Test
+    public void hasValidIDs_with_null() {
+        String[] excludedIDs = new String[]{UUID.randomUUID().toString(), null};
+        boolean result = QuestionController.hasValidIDs(excludedIDs);
+
+        assertFalse(result);
+    }
 }
