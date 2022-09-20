@@ -9,6 +9,7 @@ import org.example.quizleapi.questions.Question;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class QuestionController extends AbstractHandler {
 
         String n = request.getParameter("n");
         int numberOfQuestions = QUESTIONSET_PER_DEFAULT;
-        if (n.length() != 0) {
+        if (n.isEmpty()) {
             if (isValidNumberOfQuestions(n)) {
                 numberOfQuestions = Integer.parseInt(n);
             } else {
@@ -92,6 +93,8 @@ public class QuestionController extends AbstractHandler {
         }
         return true;
     }
+
+
 
 
     public static class QuestionWrapper {
