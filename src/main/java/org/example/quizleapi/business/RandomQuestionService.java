@@ -5,14 +5,13 @@ import org.example.quizleapi.questions.Question;
 import org.example.quizleapi.questions.SingleChoice;
 import org.example.quizleapi.questions.TextInput;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class RandomQuestionService implements QuestionService {
 
-    public List<Question> assembleQuestions(int numberOfQuestions, List<UUID> excludedIDs) throws IOException {
+    public List<Question> assembleQuestions(int numberOfQuestions, List<UUID> excludedIDs) throws IllegalArgumentException {
         List<List<Question>> questions = new ArrayList<List<Question>>();
         questions.add(TextInput.FREE_TEXT_QUESTIONS);
         questions.add(SingleChoice.SINGLE_CHOICE_QUESTIONS);
@@ -60,22 +59,22 @@ public class RandomQuestionService implements QuestionService {
      * This method checks the invalid input when it's less than 0 or greater than the question collection.
      *
      * @param numberOfQuestions a number for the questions to be passed
-     * @throws IOException if the number is less than 0 it should throw an "invalid number" and
-     *                     is it greater than the collection it should throw a message that there are no
-     *                     more questions available.
+     * @throws IllegalArgumentException if the number is less than 0 it should throw an "invalid number" and
+     *                                  is it greater than the collection it should throw a message that there are no
+     *                                  more questions available.
      */
-    public void validNumber(int numberOfQuestions, List<List<Question>> questions) throws IOException {
+    public void validNumber(int numberOfQuestions, List<List<Question>> questions) throws IllegalArgumentException {
         int totalNumberOfQuestions = 0;
         for (List<Question> question : questions) {
-             totalNumberOfQuestions += question.size();
+            totalNumberOfQuestions += question.size();
         }
 
         int typesOfAnswers = questions.size();
 
         if (numberOfQuestions > totalNumberOfQuestions) {
-            throw new IOException("So many questions aren't available");
-        } else if (numberOfQuestions < typesOfAnswers){
-            throw new IOException("Invalid Input. The number must be at least this high: "+typesOfAnswers+".");
+            throw new IllegalArgumentException("So many questions aren't available");
+        } else if (numberOfQuestions < typesOfAnswers) {
+            throw new IllegalArgumentException("Invalid Input. The number must be at least this high: " + typesOfAnswers + ".");
         }
 
     }

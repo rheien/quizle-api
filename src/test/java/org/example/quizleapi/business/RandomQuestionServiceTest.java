@@ -3,7 +3,6 @@ package org.example.quizleapi.business;
 import org.example.quizleapi.questions.*;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.*;
 
 import static java.util.Objects.deepEquals;
@@ -14,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RandomQuestionServiceTest {
 
     @Test
-    public void assembleQuestions_should_return_aQuestionList() throws IOException {
+    public void assembleQuestions_should_return_aQuestionList() throws IllegalArgumentException {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
         List<UUID> emptyIDs = new ArrayList<UUID>();
@@ -26,7 +25,7 @@ class RandomQuestionServiceTest {
     }
 
     @Test
-    public void assembleQuestions_should_return_aQuestionList_withoutExcludedQuestions() throws IOException {
+    public void assembleQuestions_should_return_aQuestionList_withoutExcludedQuestions() throws IllegalArgumentException {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
         List<UUID> blacklist = Arrays.asList(
@@ -49,7 +48,7 @@ class RandomQuestionServiceTest {
     }
 
     @Test
-    public void assembleQuestions_should_return_twoRandomQuestionLists() throws IOException {
+    public void assembleQuestions_should_return_twoRandomQuestionLists() throws IllegalArgumentException {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
         List<UUID> emptyIDs = new ArrayList<UUID>();
@@ -62,7 +61,7 @@ class RandomQuestionServiceTest {
     }
 
     @Test
-    public void assembleQuestions_should_return_noDuplicateQuestions() throws IOException {
+    public void assembleQuestions_should_return_noDuplicateQuestions() throws IllegalArgumentException {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
         List<UUID> emptyIDs = new ArrayList<UUID>();
@@ -75,7 +74,7 @@ class RandomQuestionServiceTest {
     }
 
     @Test
-    public void assembleQuestions_should_return_emptyList_noQuestionAvailable() throws IOException {
+    public void assembleQuestions_should_return_emptyList_noQuestionAvailable() throws IllegalArgumentException {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
         List<Question> mChoiceQuestions = MultipleChoice.MULTIPLE_CHOICE_QUESTIONS;
@@ -92,7 +91,7 @@ class RandomQuestionServiceTest {
     }
 
     @Test
-    public void assembleQuestions_should_return_emptyList_byNull() throws IOException {
+    public void assembleQuestions_should_return_emptyList_byNull() throws IllegalArgumentException {
         RandomQuestionService randomQuestionService = new RandomQuestionService();
 
         int randomNumber = randomNumber(QUESTIONSET_PER_DEFAULT, 18);
@@ -245,7 +244,7 @@ class RandomQuestionServiceTest {
 
         int negativeNumber = -(randomNumber(0, 10000));
 
-        assertThrows(IOException.class, () -> randomQuestionService.validNumber(negativeNumber, questions));
+        assertThrows(IllegalArgumentException.class, () -> randomQuestionService.validNumber(negativeNumber, questions));
     }
 
     @Test
@@ -263,6 +262,6 @@ class RandomQuestionServiceTest {
                 MultipleChoice.MULTIPLE_CHOICE_QUESTIONS.size();
 
         int finalHighNumber = highNumber;
-        assertThrows(IOException.class, () -> randomQuestionService.validNumber(finalHighNumber, questions));
+        assertThrows(IllegalArgumentException.class, () -> randomQuestionService.validNumber(finalHighNumber, questions));
     }
 }

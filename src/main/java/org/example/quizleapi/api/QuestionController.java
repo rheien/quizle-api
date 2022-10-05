@@ -9,9 +9,8 @@ import org.example.quizleapi.questions.Question;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -29,7 +28,7 @@ public class QuestionController extends AbstractHandler {
     }
 
     @Override
-    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IllegalArgumentException, IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
@@ -59,11 +58,15 @@ public class QuestionController extends AbstractHandler {
             }
         }
 
-        List<Question> questions = questionService.assembleQuestions(numberOfQuestions, excludedIDs);
+        try {
+            List<Question> questions = questionService.assembleQuestions(numberOfQuestions, excludedIDs);
+            response.getWriter().println(new Gson().toJson(new QuestionWrapper(questions)));
 
-        response.getWriter().println(new Gson().toJson(new QuestionWrapper(questions)));
-
-        baseRequest.setHandled(true);
+            baseRequest.setHandled(true);
+        } catch (IllegalArgumentException e) {
+            response.sendError(400, e.getMessage());
+            baseRequest.setHandled(true);
+        }
     }
 
     //this method returns true if the number is greater than zero
@@ -93,9 +96,6 @@ public class QuestionController extends AbstractHandler {
         }
         return true;
     }
-
-
-
 
     public static class QuestionWrapper {
 

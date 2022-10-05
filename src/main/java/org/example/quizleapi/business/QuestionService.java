@@ -10,5 +10,5 @@ public interface QuestionService {
 
     int QUESTIONSET_PER_DEFAULT = 6;
 
-    List<Question> assembleQuestions(int numberOfQuestions, List<UUID> excludedQuestions) throws IOException;
+    List<Question> assembleQuestions(int numberOfQuestions, List<UUID> excludedQuestions) throws IllegalArgumentException;
 }
