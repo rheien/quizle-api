@@ -46,7 +46,7 @@ public class QuestionController extends AbstractHandler {
 
         String[] x = request.getParameterValues("x");
         List<UUID> excludedIDs = new ArrayList<>();
-        if (x != null) {
+        if (x != null && x.length > 0) {
             if (hasValidIDs(x)) {
                 for (String stringID : x) {
                     excludedIDs.add(UUID.fromString(stringID));
@@ -82,14 +82,12 @@ public class QuestionController extends AbstractHandler {
     public static boolean hasValidIDs(String[] excludedIDs) {
 
         for (String id : excludedIDs) {
+
             try {
                 if (id == null) {
                     return false;
                 }
-                if (id.length() == 0) {
-                    continue;
-                }
-                UUID.fromString(id);
+                UUID uuid = UUID.fromString(id);
             } catch (IllegalArgumentException exception) {
                 return false;
             }

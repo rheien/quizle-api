@@ -34,6 +34,7 @@ class QuestionControllerTest {
         String[] excludedIDs = new String[]{UUID.randomUUID().toString(), "invalid"};
         boolean result = QuestionController.hasValidIDs(excludedIDs);
 
+        //assertThrows(IllegalArgumentException.class,() -> QuestionController.hasValidIDs(excludedIDs));
         assertFalse(result);
     }
 
