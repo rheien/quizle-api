@@ -38,7 +38,7 @@ public class QuestionController extends AbstractHandler {
             if (isValidNumberOfQuestions(n)) {
                 numberOfQuestions = Integer.parseInt(n);
             } else {
-                response.sendError(400, "Bad Request");
+                response.sendError(400, "Invalid Input. n is no a number.");
                 baseRequest.setHandled(true);
                 return;
             }
@@ -52,7 +52,7 @@ public class QuestionController extends AbstractHandler {
                     excludedIDs.add(UUID.fromString(stringID));
                 }
             } else {
-                response.sendError(400, "Bad Request");
+                response.sendError(400, "Invalid Input. List of UUIDs are incomplete or incorrect.");
                 baseRequest.setHandled(true);
                 return;
             }
@@ -93,18 +93,5 @@ public class QuestionController extends AbstractHandler {
             }
         }
         return true;
-    }
-
-    public static class QuestionWrapper {
-
-        private final List<Question> questions;
-
-        public QuestionWrapper(List<Question> questions) {
-            this.questions = questions;
-        }
-
-        public List<Question> getQuestions() {
-            return questions;
-        }
     }
 }
