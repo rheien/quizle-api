@@ -14,7 +14,7 @@ EXPOSE 8888
 
 RUN mkdir /app
 
-COPY build/libs/*jar /app/quizleapi-1.0-SNAPSHOT.jar
+COPY build/libs/*jar /app/
 
-ENTRYPOINT ["java", "-jar", "/app/quizleapi-1.0-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "/app/quizleapi.jar"]
 
