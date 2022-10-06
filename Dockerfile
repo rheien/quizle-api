@@ -1,6 +1,8 @@
 FROM eclipse-temurin:17-jdk
 
-COPY --chown=gradle=gradle . /project/
+RUN mkdir /project
+
+COPY . /project
 
 WORKDIR /project
 
@@ -12,7 +14,7 @@ EXPOSE 8888
 
 RUN mkdir /app
 
-COPY --from=build /libs/*jar /app/quizleapi-1.0-SNAPSHOT.jar
+COPY build/libs/*jar /app/quizleapi-1.0-SNAPSHOT.jar
 
 ENTRYPOINT ["java", "-jar", "/app/quizleapi-1.0-SNAPSHOT.jar"]
 
