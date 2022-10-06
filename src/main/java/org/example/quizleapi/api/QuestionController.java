@@ -34,7 +34,7 @@ public class QuestionController extends AbstractHandler {
 
         String n = request.getParameter("n");
         int numberOfQuestions = QUESTIONSET_PER_DEFAULT;
-        if (!n.isEmpty()) {
+        if (n != null && !n.isEmpty()) {
             if (isValidNumberOfQuestions(n)) {
                 numberOfQuestions = Integer.parseInt(n);
             } else {
