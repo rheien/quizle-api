@@ -21,7 +21,7 @@ tasks.withType(JavaCompile) {
 }
 
 application {
-    mainClass = 'org.example.quizleapi.QuizleApi'
+    mainClass = 'org.example.quizleapi.QuestionController'
 }
 
 tasks.withType(Jar) {
