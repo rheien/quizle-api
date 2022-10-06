@@ -14,7 +14,7 @@ EXPOSE 8888
 
 RUN mkdir /app
 
-COPY /project/build/libs/*.jar /app/
+COPY --from=0 /project/build/libs/*.jar /app/
 
 ENTRYPOINT ["java", "-jar", "/app/quizleapi.jar"]
 
