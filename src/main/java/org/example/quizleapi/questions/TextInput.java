@@ -85,6 +85,14 @@ public class TextInput {
                     new String[]{"52"},
                     new String[]{"52"},
                     QuestionType.FREE_TEXT
+            ),
+
+            new Question(
+                    UUID.fromString("5A6B898C-6F94-4A12-9809-6C54C10C632A"),
+                    "Schreib Freund und tritt ein",
+                    new String[]{"Freund"},
+                    new String[]{"Freund"},
+                    QuestionType.FREE_TEXT
             )
 
     );
