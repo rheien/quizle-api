@@ -7,7 +7,7 @@ public class Question {
 
     public final UUID id;
     public final String question;
-    public final String[] answers;
+    public String[] answers;
     public final String[] correctAnswers;
     public final QuestionType type;
 

@@ -36,17 +36,16 @@ public class RandomQuestionService implements QuestionService {
         List<Question> assembledQuestions = new ArrayList<>();
 
         //it should pick one question of each type of answers
-        int numberOfTypesOfAnswers = questions.size();
-        for (int index = 0; index < numberOfTypesOfAnswers; index++) {
-            if (!enoughQuestionsLeft(questions.get(index), excludedIDs)) {
+        for (List<Question> question : questions) {
+            if (!enoughQuestionsLeft(question, excludedIDs)) {
                 return new ArrayList<Question>();
             }
-            assembledQuestions.addAll(poseQuestions(assembledQuestions, questions.get(index), excludedIDs));
+            assembledQuestions.addAll(poseQuestions(assembledQuestions, question, excludedIDs));
         }
 
         //the rest of questions will be picked randomly
         while (numberOfQuestions > assembledQuestions.size()) {
-            int randomNumber = randomNumber(0, questions.size());
+            int randomNumber = ExtraFeature.randomNumber(0, questions.size());
             if (!enoughQuestionsLeft(questions.get(randomNumber), excludedIDs)) {
                 return new ArrayList<Question>();
             }
@@ -90,13 +89,14 @@ public class RandomQuestionService implements QuestionService {
     public List<Question> poseQuestions(List<Question> assembleQuestions, List<Question> questions, List<UUID> excludedIDs) {
         List<Question> pickQuestions = new ArrayList<Question>();
 
-        int index = randomNumber(0, questions.size());
+        int index = ExtraFeature.randomNumber(0, questions.size());
 
         while (hasBeenPicked(assembleQuestions, questions.get(index).id) ||
                 shouldBeExcluded(excludedIDs, questions.get(index).id)) {
-            index = randomNumber(0, questions.size());
+            index = ExtraFeature.randomNumber(0, questions.size());
         }
         Question question = questions.get(index);
+        ExtraFeature.shuffleArray(question.answers);
         pickQuestions.add(question);
 
         return pickQuestions;
@@ -159,7 +159,4 @@ public class RandomQuestionService implements QuestionService {
         return questions.size() > checkedQuestions.size();
     }
 
-    public static int randomNumber(int min, int max) {
-        return (int) ((Math.random() * (max - min)) + min);
-    }
 }

@@ -7,7 +7,7 @@ import java.util.*;
 
 import static java.util.Objects.deepEquals;
 import static org.example.quizleapi.business.RandomQuestionService.QUESTIONSET_PER_DEFAULT;
-import static org.example.quizleapi.business.RandomQuestionService.randomNumber;
+import static org.example.quizleapi.business.ExtraFeature.randomNumber;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RandomQuestionServiceTest {
